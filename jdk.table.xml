@@ -1,0 +1,56 @@
+<application>
+  <component name="ProjectJdkTable">
+    <jdk version="2">
+      <name value="1.8" />
+      <type value="JavaSDK" />
+      <version value="java version &quot;1.8.0_25&quot;" />
+      <homePath value="S:/Programs/Development/jdk/jdk1.8.0_25" />
+      <roots>
+        <annotationsPath>
+          <root type="composite">
+            <root type="simple" url="jar://$APPLICATION_HOME_DIR$/lib/jdkAnnotations.jar!/" />
+          </root>
+        </annotationsPath>
+        <classPath>
+          <root type="composite">
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/charsets.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/deploy.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/javaws.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/jce.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/jfr.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/jfxswt.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/jsse.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/management-agent.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/plugin.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/resources.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/rt.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/access-bridge-64.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/cldrdata.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/dnsns.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/jaccess.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/jfxrt.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/localedata.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/nashorn.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/sunec.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/sunjce_provider.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/sunmscapi.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/sunpkcs11.jar!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/jre/lib/ext/zipfs.jar!/" />
+          </root>
+        </classPath>
+        <javadocPath>
+          <root type="composite">
+            <root type="simple" url="file://T:/Docs/TechDocs/Java/jdk-8u65-docs-all" />
+          </root>
+        </javadocPath>
+        <sourcePath>
+          <root type="composite">
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/src.zip!/" />
+            <root type="simple" url="jar://S:/Programs/Development/jdk/jdk1.8.0_25/javafx-src.zip!/" />
+          </root>
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+  </component>
+</application>
