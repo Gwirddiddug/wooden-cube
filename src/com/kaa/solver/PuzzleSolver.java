@@ -137,7 +137,6 @@ public class PuzzleSolver {
             if (variant.size() == 0) {
                 Solution solution = new Solution(variant);
                 puzzle.addSolution(solution);
-
             } else {
                 //создаём объект для выполнения в отдельном потоке
                 Callable<Variants> iterateResults = new IterateVariant(postures, variant);

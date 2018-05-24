@@ -7,9 +7,7 @@ public class Main {
     public static void main(String[] args) {
         MainFormController controller = new MainFormController();
         controller.init();
-
 //        new Runtime();
-
     }
 
 }

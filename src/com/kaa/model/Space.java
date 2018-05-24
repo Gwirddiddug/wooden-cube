@@ -26,6 +26,10 @@ public abstract class Space implements Serializable {
         this.cubeSize = cubeSize+1;
     }
 
+    public int getSize() {
+        return points.size();
+    }
+
     public String getName() {
         return name;
     }

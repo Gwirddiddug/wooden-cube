@@ -37,7 +37,7 @@ public class Runtime {
     }
 
     private void puzzle1(){
-        puzzle.setSpace(new CornerSpace());
+        puzzle.setSpace(new DoubleBend());
         puzzle.setFigure(new Bend());
     }
 

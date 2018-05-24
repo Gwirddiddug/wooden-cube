@@ -7,17 +7,17 @@ import com.kaa.model.RealSpace;
  * @author Typhon
  * @since 23.11.2014
  */
-public class CornerSpace extends RealSpace {
+public class DoubleBend extends RealSpace {
 
-    int xSize=2;
-    int ySize=2;
-    int zSize=2;
+    int xSize=1;
+    int ySize=1;
+    int zSize=1;
 
-    public CornerSpace() {
+    public DoubleBend() {
         super(2);
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                for (int k = 0; k < zSize; k++) {
+        for (int i = 0; i <= xSize; i++) {
+            for (int j = 0; j <= ySize; j++) {
+                for (int k = 0; k <= zSize; k++) {
                     addPoint(new Point(i, j, k));
                 }
             }

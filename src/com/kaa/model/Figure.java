@@ -19,6 +19,18 @@ public class Figure implements Serializable{
     private int yRC = 0;
     private int zRC = 0;
 
+    public int getxRC() {
+        return xRC;
+    }
+
+    public int getyRC() {
+        return yRC;
+    }
+
+    public int getzRC() {
+        return zRC;
+    }
+
     public void incXRC() {
         this.xRC++;
     }

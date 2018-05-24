@@ -5,11 +5,11 @@ import com.kaa.model.RealSpace;
 
 /**
  * @author Typhon
- * @since 02.12.2014
+ * @since 25.11.2014
  */
-public class Cube542 extends CommonCube{
+public class Cube223 extends CommonCube {
 
-    public Cube542() {
-        super(5, 4,2);
+    public Cube223() {
+        super(2, 2, 3);
     }
 }

@@ -44,8 +44,8 @@ public class MainFormController {
         return form.getFigure();
     }
 
-
     public RealSpace getCurrentSpace(){
         return form.getSpace();
     }
+
 }
