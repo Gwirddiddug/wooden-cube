@@ -2,4 +2,7 @@
   <action id="ActivateMavenProjectsToolWindow">
     <keyboard-shortcut first-keystroke="alt m" />
   </action>
+  <action id="RecentProjectListGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl o" />
+  </action>
 </keymap>
