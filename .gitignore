@@ -4,3 +4,5 @@ $ git status
 [...]
 
 .idea*
+*.sol
+*.page
