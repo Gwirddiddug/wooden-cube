@@ -3,4 +3,7 @@ $ git status
 # Untracked files:
 [...]
 
+*.iml
 .idea*
+*.sol
+*.page
