@@ -18,12 +18,12 @@ import java.util.concurrent.*;
 public class PuzzleSolver {
     public static final String SOLUTION_FILE = "solutions.sol";
 
-    private static final long POOL_LIMIT = 21;
-    private static final byte MAX_THREADS_COUNT = 7;
+    private static final long POOL_LIMIT = 2000;
+    private static final byte MAX_THREADS_COUNT = 8;
 
     private static final long BACKLOG_LIMIT = 5000;
-    private static final long SERIALIZATION_PACK_SIZE = 1000;
-    private BackLog backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE);
+    public static final int SERIALIZATION_PACK_SIZE = 2000;
+    private BackLog backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE, null);
 
     private long maxPoolCount = 0;
     private long maxBackLogCount = 0;
@@ -50,13 +50,15 @@ public class PuzzleSolver {
 
     //итерационный метод: итерация - добавление очередной фигуры
     private void solvePuzzle(Puzzle puzzle) {
-        validate(puzzle);
+        if (!validate(puzzle)) {
+            return;
+        }
 
         Figure figure = puzzle.getFigure();
         RealSpace space = puzzle.getSpace();
         List<Figure> postures = FigureUtils.buildPostures(figure);
 
-        backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE);
+        backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE, space.clone());
         Variants variants = new Variants();
         variants.add(space);
 
@@ -86,7 +88,8 @@ public class PuzzleSolver {
                 }
             }
 
-            if (newSpaces.size() > 0) {
+            maxPoolCount = Math.max(maxPoolCount, newSpaces.size());
+            if (!newSpaces.isEmpty()) {
                 variants = newSpaces;
             } else {
                 break; //если нет, новых решений, то сохраняем последние полученные результаты
@@ -98,19 +101,15 @@ public class PuzzleSolver {
     private Variants checkVariant(Variants newSpaces, Future<Variants> futureVariant) {
         try {
             Variants futures = futureVariant.get();
-            if (futures.size() > 0) {
+            if (!futures.isEmpty()) {
                 if ((newSpaces.size() + futures.size()) < POOL_LIMIT || newSpaces.size()==0) {
                     newSpaces.addAll(futures);
                 } else {
                     backLog.addAll(futures);
-                    if (maxBackLogCount < backLog.size()) {
-                        maxBackLogCount = backLog.size();
-                    }
+                    maxBackLogCount = Math.max(maxBackLogCount, backLog.size());
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return newSpaces;
@@ -141,10 +140,12 @@ public class PuzzleSolver {
         return futureVariants;
     }
 
-    private void validate(Puzzle puzzle) {
+    private boolean validate(Puzzle puzzle) {
         if (puzzle.getSpace().size() % puzzle.getFigure().size() > 0) {
             System.out.println(String.format("unsolvable: %s and %s", puzzle.getSpace().size(), puzzle.getFigure().size()));
+            return false;
         }
+        return true;
     }
 
     public void showResults(List<? extends RealSpace> solutions) {

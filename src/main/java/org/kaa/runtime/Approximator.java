@@ -1,9 +1,6 @@
 package org.kaa.runtime;
 
-import sun.awt.image.ImageWatched;
-
 import java.math.BigDecimal;
-import java.util.LinkedList;
 
 /**
  * @author sbt-kopilov-aa

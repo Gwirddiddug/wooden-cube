@@ -25,7 +25,7 @@ public class ResultPrinter {
             int order = 0;
             for (Figure part : solution.figures()) {
                 order++;
-                System.out.println(String.format("Figure#%s:\n%s", order, buildFigureOutput(part)));
+                System.out.println(String.format("Figure#%s:\t%s", order, buildFigureOutput(part)));
             }
         }
     }

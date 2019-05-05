@@ -1,5 +1,6 @@
 package org.kaa.model;
 
+import org.kaa.solver.PuzzleSolver;
 import org.kaa.utils.IOUtils;
 
 import java.util.LinkedList;
@@ -41,7 +42,7 @@ public class Puzzle {
     }
 
     private void saveSolutionToFile(Solution solution) {
-        IOUtils.saveSolution(solution, "solutions.sol");
+        IOUtils.saveSolution(solution, PuzzleSolver.SOLUTION_FILE);
     }
 
     public List<Solution> getSolutions() {

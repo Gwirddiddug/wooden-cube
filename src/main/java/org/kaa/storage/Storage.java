@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,15 +17,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Storage extends AbstractStorage<RealSpace> {
 
+    protected RealSpace space;
     protected long backlogLimit;
     protected long serializationPackSize;
     private long fileIndex = 0;
 
-    private List<String> files = new LinkedList<>();
+    private ConcurrentSkipListSet<String> filesInProcess = new ConcurrentSkipListSet<>();
+    private ConcurrentSkipListSet<String> files = new ConcurrentSkipListSet<>();
+
     private ExecutorService reader = Executors.newSingleThreadExecutor();
     private ExecutorService writer = Executors.newSingleThreadExecutor();
     private AtomicInteger processCount = new AtomicInteger(0);//количество активных процессов сохранения
-    private List<String> filesInProcess = new LinkedList<>();
 
     @Override
     public boolean add(RealSpace realSpace) {
@@ -43,49 +46,35 @@ public class Storage extends AbstractStorage<RealSpace> {
     @Override
     protected boolean checkSize() {
         if (size() > backlogLimit) {
-            try {
-                serialize();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else if (size() < serializationPackSize) {
-            try {
-                deserialize();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            serialize();
+        } else if (size() < backlogLimit - serializationPackSize) {
+            deserialize();
         }
         return false;
     }
 
     /**
      * добавляет записанный файл в список досутпных
-     *
      * @param fileName
      */
     private synchronized void addFileName(String fileName) {
-        if (filesInProcess.contains(fileName)) {
-            filesInProcess.remove(fileName);
+        if (filesInProcess.remove(fileName)) {
+            files.add(fileName);
         }
-        files.add(fileName);
     }
 
     /**
-     * генерирует имя файла с пятизначным числовым суффиксом
+     * генерирует имя файла с шестизначным числовым суффиксом
      *
      * @return имя файла сохранения вариантов
      */
     private synchronized String getFileNameForWrite() {
         String index = String.valueOf(++fileIndex);
-        while (index.length() < 5) {
+        while (index.length() < 6) {
             index = "0" + index;
         }
 
-        String fileName = "solutions#" + ++fileIndex + ".page";
+        String fileName = "solutions#" + index + ".page";
         filesInProcess.add(fileName);
         return fileName;
     }
@@ -94,9 +83,9 @@ public class Storage extends AbstractStorage<RealSpace> {
      * @return файл для загрузки вариантов
      */
     private synchronized String getFileNameForRead() {
-        if (files.size() > 0) {
-            String file = files.get(0);
-            files.remove(0);
+        if (!files.isEmpty()) {
+            String file = files.first();
+            files.remove(file);
             return file;
         }
         return null;
@@ -109,8 +98,7 @@ public class Storage extends AbstractStorage<RealSpace> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void serialize() throws IOException, ClassNotFoundException {
-
+    private void serialize() {
         if (size() <= serializationPackSize) return;
 
         String fileForWrite = getFileNameForWrite();
@@ -123,12 +111,11 @@ public class Storage extends AbstractStorage<RealSpace> {
 
         processCount.incrementAndGet();
         Runnable write = () -> {
-            System.out.println("Start write:" + fileForWrite);
-//            IOUtils.saveVariants(solutions, fileForWrite);
+//            System.out.println("Start write:" + fileForWrite);
             IOUtils.saveVariantsOptimized(solutions, fileForWrite);
             addFileName(fileForWrite);
             processCount.decrementAndGet();
-            System.out.println("Stop write:" + fileForWrite);
+//            System.out.println("Stop write:" + fileForWrite);
         };
         writer.execute(write);
     }
@@ -139,29 +126,24 @@ public class Storage extends AbstractStorage<RealSpace> {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void deserialize() throws IOException, ClassNotFoundException {
+    private void deserialize() {
         if (!hasSerialized()) return;
 
-        List<RealSpace> spaces = IOUtils.loadVariantsOptimized(getFileNameForRead());
-//        List<RealSpace> spaces = IOUtils.loadVariants(getFileNameForRead());
+        List<RealSpace> spaces = IOUtils.loadVariantsOptimized(getFileNameForRead(), this.space);
+        addAll(spaces);
 
-        int i = 0;
-        List<RealSpace> solutions = new LinkedList<>();
+/*        List<RealSpace> solutions = new LinkedList<>();
         for (RealSpace space : spaces) {
             if (size() < backlogLimit) {
                 add(space);
-                i++;
             } else {
                 solutions.add(space);
             }
         }
-
-        System.out.println("\n" + (spaces.size() - solutions.size()) + "/" + size() + " get:" + i);
-
+//        System.out.println("\n" + (spaces.size() - solutions.size()) + "/" + size() + " get:" + i);
         if (solutions.size() > 0) {
-//            executor.execute(() -> IOUtils.saveVariants(solutions, getFileNameForWrite()));
             IOUtils.saveVariantsOptimized(solutions, getFileNameForWrite());
-        }
+        }*/
     }
 
     /**
@@ -169,23 +151,22 @@ public class Storage extends AbstractStorage<RealSpace> {
      * @return true, если есть
      */
     private boolean hasSerialized() {
-        if (files.size() > 0) {
+        if (!files.isEmpty()) {
             return true;
         } else {
             while (isSavingInProcess()) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.yield();
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     System.err.println("Waiting interrupted");
                 }
             }
-            return files.size() > 0;
+            return !files.isEmpty();
         }
     }
 
     private boolean isSavingInProcess() {
         return processCount.get() > 0;
     }
-
-
 }

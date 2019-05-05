@@ -12,11 +12,11 @@ public class Atom extends Point {
         super(point.x, point.y, point.z);
     }
 
-    public static Atom fromIndex(Integer index) {
+    public static Atom fromIndex(Integer index, int measure) {
         Point point = new Point();
-        point.x = index % 5;
-        point.y = (index - point.x) / 5 % 5;
-        point.z = (index - point.x - point.y * 5) / 25;
+        point.x = index % measure;
+        point.y = (index - point.x) / measure % measure;
+        point.z = (index - point.x - point.y * measure) / measure / measure;
         return new Atom(point);
     }
 
@@ -28,7 +28,7 @@ public class Atom extends Point {
         return this;
     }
 
-    public void setOrderNumber(int orderNumber) {
+    void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
 

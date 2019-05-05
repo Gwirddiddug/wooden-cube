@@ -35,12 +35,12 @@ public class SimpleTest {
     @Test
     public void testPuzzle322Bend(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,4,2));
+        puzzle.setSpace(new CommonCube(5,4,4));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);
 
         List<Solution> solutions = puzzle.getSolutions();
-        assertEquals("Wrong solutions count", 8, solutions.size());
+        assertEquals("Wrong solutions count", 16, solutions.size());
     }
 }
