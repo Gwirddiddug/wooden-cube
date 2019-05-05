@@ -25,7 +25,7 @@ public class RealSpace extends Space implements Serializable {
 
     @Override
     public RealSpace clone() {
-        RealSpace clone = new RealSpace(cubeSize);
+        RealSpace clone = new RealSpace(getCubeSize());
         Iterator<SpacePoint> iterator = iterator();
         while (iterator.hasNext()) {
             clone.addPoint(iterator.next().clone());
@@ -34,6 +34,10 @@ public class RealSpace extends Space implements Serializable {
             clone.figures.add(figure.clone());
         }
         return clone;
+    }
+
+    public int getCubeSize() {
+        return cubeSize-1;
     }
 
     /**
@@ -91,7 +95,7 @@ public class RealSpace extends Space implements Serializable {
     }
 
 
-    private void putFigure(Figure figure) {
+    public void putFigure(Figure figure) {
         Iterator<Atom> iterator = figure.atomator();
         while (iterator.hasNext()) {
             Atom next = iterator.next();
@@ -228,5 +232,19 @@ public class RealSpace extends Space implements Serializable {
         }
 
         return textView;
+    }
+
+    public Integer[][] preSerialize() {
+        int figureIndex = 0;
+        Integer[][] arrFigures = new Integer[figures().size()][];
+        for (Figure figure : figures()) {
+            int atomIndex = 0;
+            Integer[] arrAtoms = new Integer[figure.atoms().size()];
+            for (Atom atom : figure.atoms()) {
+                arrAtoms[atomIndex++]=atom.getIndex(getCubeSize());
+            }
+            arrFigures[figureIndex++] = arrAtoms;
+        }
+        return arrFigures;
     }
 }

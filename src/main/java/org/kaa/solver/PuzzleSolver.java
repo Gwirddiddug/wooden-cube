@@ -155,12 +155,11 @@ public class PuzzleSolver {
 
         int index = 0;
         for (RealSpace solution : solutions) {
-            index++;
             System.out.println("--------------------------");
-            System.out.println(String.format("Variant#%s:", index));
-
+            System.out.println(String.format("Variant#%s:", ++index));
             printer.printSolution(solution);
         }
+        System.out.println();
     }
 
     private class IterateVariant implements Callable<Variants> {

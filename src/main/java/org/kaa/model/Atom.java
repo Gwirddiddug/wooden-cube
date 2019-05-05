@@ -12,6 +12,14 @@ public class Atom extends Point {
         super(point.x, point.y, point.z);
     }
 
+    public static Atom fromIndex(Integer index) {
+        Point point = new Point();
+        point.x = index % 5;
+        point.y = (index - point.x) / 5 % 5;
+        point.z = (index - point.x - point.y * 5) / 25;
+        return new Atom(point);
+    }
+
     public Point getPoint() {
         return this;
     }
