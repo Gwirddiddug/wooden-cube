@@ -1,5 +1,7 @@
 package org.kaa.model;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
  * @author Typhon
  * @since 01.11.2014
  */
+@Getter
 public class Figure implements Serializable{
 
     private List<Atom> atoms = new LinkedList<>();
@@ -116,22 +119,6 @@ public class Figure implements Serializable{
     @Override
     public String toString() {
         return this.getClass().getSimpleName();
-    }
-
-    public String getView(){
-        return buildOutputString();
-    }
-
-    private String buildOutputString() {
-        StringBuffer output = new StringBuffer();
-        output.append("{");
-        for (Atom atom : atoms) {
-            Point point = atom.getPoint();
-            output.append(output.length() > 1 ? ", " : "");
-            output.append(String.format("\n(%s,%s,%s)", point.x+1, point.y+1, point.z+1));
-        }
-        output.append("}");
-        return getName() + output;
     }
 
     public String getName() {

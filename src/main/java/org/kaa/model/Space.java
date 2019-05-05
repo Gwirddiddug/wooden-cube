@@ -174,6 +174,10 @@ public abstract class Space implements Serializable {
         return points.values().stream().filter(p -> p.isEmpty()).collect(Collectors.toList());
     }
 
+    public int getTotal() {
+        return cubeSize;
+    }
+
     public int size() {
         return points.size();
     }

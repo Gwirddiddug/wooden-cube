@@ -36,4 +36,8 @@ public class Point implements Serializable {
     public String toString() {
         return String.format("(%s, %s, %s)", x,y,z);
     }
+
+    public int getIndex(int measure) {
+        return measure*measure*(z) + measure*(y) + x;
+    }
 }

@@ -25,10 +25,8 @@ public class PuzzleSolver {
     private static final long SERIALIZATION_PACK_SIZE = 1000;
     private BackLog backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE);
 
-    private long iterationTime = System.currentTimeMillis();
     private long maxPoolCount = 0;
     private long maxBackLogCount = 0;
-    private final boolean SHOW_FIGURES = true;
 
     private Puzzle puzzle = null;
 
@@ -62,20 +60,16 @@ public class PuzzleSolver {
         Variants variants = new Variants();
         variants.add(space);
 
-
 //        executor.start();
         iterate(puzzle, postures, variants);
-
     }
 
     //перебор вариантов
     private void iterate(Puzzle puzzle, List<Figure> postures, Variants variants) {
+        ProgressBar progressBar = new ProgressBar(puzzle);
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS_COUNT);
-        float progress = 0;
         while (variants.size() > 0) {
-            String executionTime = String.valueOf(System.currentTimeMillis() - iterationTime);
-            System.out.print(String.format("\nprogress#%s(%s ms)", variants.size(), executionTime));
-            iterationTime = System.currentTimeMillis();
+//            progressBar.printProgress(variants);
 
             //добавляем ещё одну фигуру
             Variants newSpaces = new Variants();
@@ -98,11 +92,10 @@ public class PuzzleSolver {
                 break; //если нет, новых решений, то сохраняем последние полученные результаты
             }
         }
-        executor.shutdown();
     }
 
     //пытаемся подставить фигуру
-    private void checkVariant(Variants newSpaces, Future<Variants> futureVariant) {
+    private Variants checkVariant(Variants newSpaces, Future<Variants> futureVariant) {
         try {
             Variants futures = futureVariant.get();
             if (futures.size() > 0) {
@@ -120,6 +113,7 @@ public class PuzzleSolver {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        return newSpaces;
     }
 
     /**
@@ -154,6 +148,8 @@ public class PuzzleSolver {
     }
 
     public void showResults(List<? extends RealSpace> solutions) {
+        ResultPrinter printer = new ResultPrinter(puzzle);
+
         System.out.println("\n==========================");
         System.out.println(String.format("Variants(%s):", solutions.size()));
 
@@ -163,17 +159,7 @@ public class PuzzleSolver {
             System.out.println("--------------------------");
             System.out.println(String.format("Variant#%s:", index));
 
-            if (solution.countEmpty() > 0) {
-                System.out.println(String.format("size:%s, empty:%s, filled:%s", solution.size(), solution.countEmpty(), solution.countFilled()));
-            }
-
-            if (SHOW_FIGURES) {
-                int order = 0;
-                for (Figure part : solution.figures()) {
-                    order++;
-                    System.out.println(String.format("Figure#%s:\n%s", order, part.getView()));
-                }
-            }
+            printer.printSolution(solution);
         }
     }
 
@@ -187,7 +173,7 @@ public class PuzzleSolver {
         }
 
         @Override
-        public Variants call() throws Exception {
+        public Variants call() {
             Variants newSpaces = new Variants();
             for (Figure posture : postures) {
                 List<RealSpace> newSolutions = solution.clone().allocateFigure(posture);
@@ -216,7 +202,7 @@ public class PuzzleSolver {
         }
 
         @Override
-        public List<RealSpace> call() throws Exception {
+        public List<RealSpace> call() {
             List<RealSpace> targetSpaces = new LinkedList<>();
             for (Figure posture : postures) {
                 List<RealSpace> newSolutions = solution.clone().allocateFigure(posture);
@@ -227,7 +213,7 @@ public class PuzzleSolver {
 
     }
 
-    private class Variants extends LinkedList<RealSpace> {
+    class Variants extends LinkedList<RealSpace> {
   /*      @Override
         public boolean add(RealSpace space) {
             if (!isIn(space)){
