@@ -5,6 +5,7 @@ import org.kaa.model.Figure;
 import org.kaa.model.RealSpace;
 import org.kaa.model.Solution;
 import org.kaa.solver.PuzzleSolver;
+import org.kaa.solver.ResultPrinter;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class IOUtils {
 
     public static void saveSolution(Solution solution, String fileName){
         FileWriter writer;
+        ResultPrinter printer = new ResultPrinter(solution);
         try {
             writer = new FileWriter(fileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            bufferedWriter.write(solution.getTextView());
+            bufferedWriter.write("--------------------------");
+            bufferedWriter.write(printer.buildSolutionOutput(solution));
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

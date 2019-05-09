@@ -40,7 +40,7 @@ public class PuzzleSolver {
 
         SolutionInfo solutionInfo = new SolutionInfo();
         System.out.println("Variants:" + puzzle.getSolutions().size());
-        System.out.println("Total time:" + String.valueOf(System.currentTimeMillis() - startTime));
+        System.out.println("Total time:" + (System.currentTimeMillis() - startTime));
         System.out.println("Max size:" + maxPoolCount);
         System.out.println("Max backlog size:" + maxBackLogCount);
         System.out.println("POOL LIMIT:" + POOL_LIMIT);

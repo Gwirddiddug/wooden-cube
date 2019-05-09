@@ -7,29 +7,40 @@ import org.kaa.model.*;
  */
 public class ResultPrinter {
 
+    private int measure = 5;
     private final boolean SHOW_FIGURES = true;
 
-    private Puzzle puzzle;
+    public ResultPrinter(RealSpace space) {
+        measure = space.getCubeSize();
+    }
 
     public ResultPrinter(Puzzle puzzle) {
-        this.puzzle = puzzle;
+        measure = puzzle.getSpace().getCubeSize();
     }
 
     public void printSolution(RealSpace solution) {
+        System.out.println(buildSolutionOutput(solution));
+    }
+
+    public String buildSolutionOutput(RealSpace solution) {
+        StringBuilder result = new StringBuilder();
+
         if (solution.countEmpty() > 0) {
-            System.out.println(String.format("size:%s, empty:%s, filled:%s",
+            result.append(String.format("size:%s, empty:%s, filled:%s",
                     solution.size(), solution.countEmpty(), solution.countFilled()));
+            result.append("\n");
         }
 
         if (SHOW_FIGURES) {
             int order = 0;
             for (Figure part : solution.figures()) {
                 order++;
-                System.out.println(String.format("Figure#%s:\t%s", order, buildFigureOutput(part)));
+                result.append(String.format("Figure#%s:\t%s", order, buildFigureOutput(part)));
+                result.append("\n");
             }
         }
+        return result.toString();
     }
-
 
     private String buildFigureOutput(Figure part) {
         StringBuffer output = new StringBuffer();
@@ -43,8 +54,8 @@ public class ResultPrinter {
         return part.getName() + output;
     }
 
-    private String buildPointOutput(Point point) {
-        return String.valueOf(point.getIndex(5));
+    public String buildPointOutput(Point point) {
+        return String.valueOf(point.getIndex(measure));
 //        return String.format("\n(%s,%s,%s)", point.x+1, point.y+1, point.z+1);
     }
 

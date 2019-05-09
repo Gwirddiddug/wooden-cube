@@ -1,5 +1,6 @@
 package org.kaa.model;
 
+import org.kaa.solver.ResultPrinter;
 import org.kaa.utils.Utils;
 
 import java.io.Serializable;
@@ -214,24 +215,9 @@ public class RealSpace extends Space implements Serializable {
         return Utils.getMaxPoint(points.values());
     }
 
-
     public String getTextView() {
-        String textView = "";
-
-        textView += "\nРазмер куба:" + cubeSize + "\n";
-        textView += "Точки:\n";
-        int i = 1;
-        for (SpacePoint spacePoint : points.values()) {
-            textView += String.format("\nPoint#%s: %s", i++, spacePoint) ;
-        }
-
-        textView += "Фигуры:\n";
-        i = 0;
-        for (Figure figure : figures) {
-            textView += String.format("\nFigure#%s: %s", i++, figure) ;
-        }
-
-        return textView;
+        ResultPrinter printer = new ResultPrinter(this);
+        return printer.buildSolutionOutput(this);
     }
 
     public Integer[][] preSerialize() {
