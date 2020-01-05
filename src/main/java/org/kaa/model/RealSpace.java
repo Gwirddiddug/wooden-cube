@@ -1,10 +1,12 @@
 package org.kaa.model;
 
+import org.kaa.exceptions.FilledSpacePointException;
 import org.kaa.solver.ResultPrinter;
 import org.kaa.utils.Utils;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,16 +27,9 @@ public class RealSpace extends Space implements Serializable {
 		super(cubeSize);
 	}
 
-	public RealSpace() {
-	}
-
-	@Override
-	public RealSpace clone() {
+	public RealSpace buildClone() {
 		RealSpace clone = new RealSpace(getCubeSize());
-		Iterator<SpacePoint> iterator = iterator();
-		while (iterator.hasNext()) {
-			clone.addPoint(iterator.next().clone());
-		}
+		clone.points = new HashMap<>(points);
 		clone.compactFigures = new HashSet<>(compactFigures);
 		return clone;
 	}
@@ -50,9 +45,6 @@ public class RealSpace extends Space implements Serializable {
 
 	/**
 	 * Определяет использовать ли оптимистичный сценарий заполнения или пессимистичный
-	 *
-	 * @param figure
-	 * @return
 	 */
 	private boolean optimisticCase(Figure figure) {
 		return size() % figure.size() == 0;
@@ -67,7 +59,7 @@ public class RealSpace extends Space implements Serializable {
 			Point zeroPoint = getNewZeroPoint(point, next.getPoint());
 			Figure adaptedFigure = figure.recalculateForNewZeroPoint(zeroPoint);
 			if (hasEnoughSpaceFor(adaptedFigure)) {
-				RealSpace newSpace = clone();
+				RealSpace newSpace = buildClone();
 				newSpace.putFigure(adaptedFigure);
 				spaces.add(newSpace);
 			}
@@ -86,7 +78,6 @@ public class RealSpace extends Space implements Serializable {
 		//если количество ячеек пространства не кратно количеству ячеек фигуры,
 		// то перебор по первой точке не даст максимального заполнения
 		if (optimisticCase(figure)) {
-//            List<RealSpace> allocateFigure = allocateFigure(figure, getFirstPoint());
 			List<RealSpace> allocateFigure = allocateFigure(figure, getNextPoint());
 			solutions.addAll(allocateFigure);
 		} else {
@@ -100,6 +91,7 @@ public class RealSpace extends Space implements Serializable {
 
 	private SpacePoint getNextPoint() {
 		return getFreePoint();
+//		return getFirstPoint();
 	}
 
 	public void putFigure(Figure figure) {
@@ -108,7 +100,7 @@ public class RealSpace extends Space implements Serializable {
 			Atom next = iterator.next();
 			SpacePoint point = getPoint(next.getPoint());
 			if (point == null) {
-				throw new RuntimeException("Space point not Empty!");
+				throw new FilledSpacePointException();
 			}
 			removePoint(point);
 		}
@@ -158,7 +150,6 @@ public class RealSpace extends Space implements Serializable {
 	}
 
 	public Set<Figure> figures() {
-		System.out.println("FIGURES!");
 		if (figures.size() != compactFigures.size()) {
 			figures.clear();
 			for (CompactFigure compactFigure : compactFigures) {
@@ -176,50 +167,46 @@ public class RealSpace extends Space implements Serializable {
 	}
 
 	private String buildStringView() {
-		String emptySquare = "\u25A1";
-		String filledSquare = "\u25A0";
-
-		Point minPoint = getMinPoint();
-		Point maxPoint = getMaxPoint();
-
+//		String filledSquare = "\u25A0";
+//		Point minPoint = getMinPoint();
+//		Point maxPoint = getMaxPoint();
 		///todo сделать корректное отображение 3D
-		String coords = "{";
-		String output = "";
+/*
+		StringBuilder coords = new StringBuilder("{");
 		for (int y = maxPoint.y; y >= minPoint.y; y--) {
-			String line = "";
+//			String line = "";
+			StringBuilder line = new StringBuilder();
 			for (int x = minPoint.x; x <= maxPoint.x; x++) {
 				for (int z = minPoint.z; z <= maxPoint.z; z++) {
 					SpacePoint point = getPoint(x + 1, y + 1, z + 1);
 					if (point == null) {
-						line += " ";
+						line.append(" ");
 					} else {
-						coords += point;
-						coords += ",";
-						line += filledSquare;
+						coords.append(point);
+						coords.append(",");
+						line.append(filledSquare);
 					}
 				}
 			}
-			output += line + "\n";
+//			output.append(line).append("\n");
 		}
 		if (coords.length() > 1) {
-			coords = coords.substring(1, coords.length() - 1);
+//			coords = coords.substring(1, coords.length() - 1);
+			coords.delete(coords.length(), coords.length());
 		}
-		coords += "}";
-
-		output = "";
+		coords.append("}");*/
+		StringBuilder output = new StringBuilder();
 		int order = 0;
 		for (Figure part : figures()) {
 			order++;
-			output += String.format("\nFigure#%s:\n%s", order, part);
+			output.append(String.format("\nFigure#%s:\n%s", order, part));
 		}
-		return output;
+		return output.toString();
 	}
 
 
 	/**
 	 * Формирует абстрактную точку с минимальными значеними по всем координатам
-	 *
-	 * @return
 	 */
 	public Point getMinPoint() {
 		return Utils.getMinPoint(points.values());
@@ -227,8 +214,6 @@ public class RealSpace extends Space implements Serializable {
 
 	/**
 	 * Формирует абстрактную точку с максимальными значеними по всем координатам
-	 *
-	 * @return
 	 */
 	public Point getMaxPoint() {
 		return Utils.getMaxPoint(points.values());

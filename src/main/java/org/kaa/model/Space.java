@@ -19,13 +19,9 @@ import static org.kaa.solver.PuzzleSolver.FIXED_MEASURE;
 public abstract class Space implements Serializable {
 
 	protected HashMap<Integer, SpacePoint> points = new HashMap<>();
-	protected int cubeSize = 0; //размер куба в котором размещена фигура
-
-	protected Space() {
-	}
+	protected final int cubeSize; //размер куба в котором размещена фигура
 
 	protected Space(int cubeSize) {
-		this();
 		this.cubeSize = cubeSize + 1;
 	}
 
@@ -36,13 +32,13 @@ public abstract class Space implements Serializable {
 	/**
 	 * проверяет попадает ли точка в куб и увеличивает его при необходимости
 	 */
-	private void checkCubeSize(Point point) {
+/*	private void checkCubeSize(Point point) {
 		int maxCoordinate = Integer.max(Integer.max(point.x, point.y), point.z);
 		if (maxCoordinate >= cubeSize) {
 			cubeSize = maxCoordinate + 1;
 		}
 		recalculatePoints();
-	}
+	}*/
 
 	private void recalculatePoints() {
 		HashMap<Integer, SpacePoint> newMap = new HashMap<>();
@@ -142,11 +138,11 @@ public abstract class Space implements Serializable {
         spacePoint = getPoint(4, 4, 4);
         if (spacePoint!=null) return spacePoint;*/
 
+//		if (!points.isEmpty()) {
+//			return points.values().iterator().next();
+//		}
 		for (SpacePoint point : points.values()) {
-
-//            if (point.isEmpty()) {
 			return point;
-//            }
 		}
 		return null;
 	}

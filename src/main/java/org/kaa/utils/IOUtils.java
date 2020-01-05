@@ -1,5 +1,6 @@
 package org.kaa.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.kaa.model.Atom;
 import org.kaa.model.Figure;
 import org.kaa.model.RealSpace;
@@ -25,45 +26,38 @@ import java.util.List;
  * @since 19/12/2014
  * Методы для работы с сохранением и загрузкой
  */
+@Slf4j
 public class IOUtils {
+
+	private IOUtils() {}
 
 	public static void clear(String fileName) {
 		File file = new File(fileName);
-		if (file.exists()) {
-			boolean delete = file.delete();
-			if (!delete) {
-				System.err.println("Файл не был удалён: " + fileName);
-			}
+		if (file.exists() && !file.delete()) {
+			log.error("Файл не был удалён: " + fileName);
 		}
 	}
 
 	public static void saveSolution(Solution solution, String fileName) {
-		FileWriter writer;
 		ResultPrinter printer = new ResultPrinter(solution);
-		try {
-			writer = new FileWriter(fileName, true);
-			BufferedWriter bufferedWriter = new BufferedWriter(writer);
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
 			bufferedWriter.write("--------------------------");
 			bufferedWriter.write(printer.buildSolutionOutput(solution));
-			bufferedWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Fail on save solution", e);
 		}
 	}
 
 	public static void saveVariantsOptimized(List<RealSpace> solutions, String fileName) {
 		Integer[][][] prepared = prepareSolution(solutions);
 
-		try {
-			FileOutputStream outputStream = new FileOutputStream(fileName, false);
-			ObjectOutputStream out = new ObjectOutputStream(outputStream);
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName, false))) {
 			out.writeObject(prepared);
 //            System.out.println(prepared.length + " put:" + prepared.length);
-			out.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("Не найден файл: " + fileName);
+			log.error("Не найден файл: {}", fileName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Ошибка при сохранении вариантов", e);
 		}
 	}
 
@@ -82,7 +76,7 @@ public class IOUtils {
 		List<RealSpace> result = new ArrayList<>(solutions.length);
 
 		for (Integer[][] figures : solutions) {
-			RealSpace solution = space.clone();
+			RealSpace solution = space.buildClone();
 			for (Integer[] atoms : figures) {
 				Figure figure = new Figure();
 				for (Integer integer : atoms) {

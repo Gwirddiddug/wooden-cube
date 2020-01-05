@@ -1,5 +1,4 @@
 $ git status
-[...]
 # Untracked files:
 [...]
 
@@ -7,3 +6,4 @@ $ git status
 .idea*
 *.sol
 *.page
+target/
