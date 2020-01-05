@@ -9,18 +9,18 @@ import org.kaa.model.RealSpace;
  */
 public class SquareSpace extends RealSpace {
 
-    public SquareSpace() {
-        super(4);
-        int xSize=2;
-        int ySize=4;
-        int zSize=1;
+	public SquareSpace() {
+		super(4);
+		int xSize = 2;
+		int ySize = 4;
+		int zSize = 1;
 
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                for (int k = 0; k < zSize; k++) {
-                    addPoint(new Point(i, j, k));
-                }
-            }
-        }
-    }
+		for (int i = 0; i < xSize; i++) {
+			for (int j = 0; j < ySize; j++) {
+				for (int k = 0; k < zSize; k++) {
+					addPoint(new Point(i, j, k));
+				}
+			}
+		}
+	}
 }

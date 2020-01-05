@@ -10,10 +10,10 @@ import org.kaa.model.Point;
  */
 public class Bend extends Figure {
 
-    public Bend() {
-        addAtom(new Atom(new Point(0,0,0)));
-        addAtom(new Atom(new Point(0,1,0)));
-        addAtom(new Atom(new Point(1,1,0)));
-    }
+	public Bend() {
+		addAtom(new Atom(new Point(0, 0, 0)));
+		addAtom(new Atom(new Point(0, 1, 0)));
+		addAtom(new Atom(new Point(1, 1, 0)));
+	}
 
 }

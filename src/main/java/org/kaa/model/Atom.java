@@ -6,44 +6,48 @@ package org.kaa.model;
  * Представление одного кубика
  */
 public class Atom extends Point {
-    private int orderNumber = 0;
+	private int orderNumber = 0;
 
-    public Atom(Point point) {
-        super(point.x, point.y, point.z);
-    }
+	public Atom(Point point) {
+		super(point.x, point.y, point.z);
+	}
 
-    public static Atom fromIndex(Integer index, int measure) {
-        Point point = new Point();
-        point.x = index % measure;
-        point.y = (index - point.x) / measure % measure;
-        point.z = (index - point.x - point.y * measure) / measure / measure;
-        return new Atom(point);
-    }
+	public Atom(int x, int y, int z) {
+		super(x, y, z);
+	}
 
-    public Point getPoint() {
-        return this;
-    }
+	public static Atom fromIndex(Integer index, int measure) {
+		Point point = new Point();
+		point.x = index % measure;
+		point.y = (index - point.x) / measure % measure;
+		point.z = (index - point.x - point.y * measure) / measure / measure;
+		return new Atom(point);
+	}
 
-    public Point point() {
-        return this;
-    }
+	public Point getPoint() {
+		return this;
+	}
 
-    void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public Point point() {
+		return this;
+	}
 
-    @Override
-    public String toString() {
-        return "Atom{" +
-                "point=" + super.toString() +
-                ", orderNumber=" + orderNumber +
-                '}';
-    }
+	void setOrderNumber(int orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
-    @Override
-    protected Atom clone() {
-        Atom atom = new Atom(this);
-        atom.setOrderNumber(orderNumber);
-        return atom;
-    }
+	@Override
+	public String toString() {
+		return "Atom{" +
+				"point=" + super.toString() +
+				", orderNumber=" + orderNumber +
+				'}';
+	}
+
+	@Override
+	protected Atom clone() {
+		Atom atom = new Atom(this);
+		atom.setOrderNumber(orderNumber);
+		return atom;
+	}
 }

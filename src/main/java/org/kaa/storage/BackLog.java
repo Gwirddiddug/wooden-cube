@@ -11,10 +11,10 @@ import org.kaa.model.RealSpace;
 //public class BackLog extends LinkedList<RealSpace> {
 public class BackLog extends Storage {
 
-    public BackLog(long backlogLimit, long serializationPackSize, RealSpace space) {
-        this.space = space;
-        this.backlogLimit = backlogLimit;
-        this.serializationPackSize = serializationPackSize;
-    }
+	public BackLog(long backlogLimit, long serializationPackSize, RealSpace space) {
+		this.space = space;
+		this.backlogLimit = backlogLimit;
+		this.serializationPackSize = serializationPackSize;
+	}
 
 }

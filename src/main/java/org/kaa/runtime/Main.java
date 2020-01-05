@@ -1,12 +1,14 @@
 package org.kaa.runtime;
 
-import org.kaa.gui.main.MainFormController;
+import org.kaa.puzzle.figures.Zigzag;
+import org.kaa.puzzle.spaces.CommonCube;
 
 public class Main {
-    public static void main(String[] args) {
-        MainFormController controller = new MainFormController();
-        controller.init();
-//        new Runtime();
-    }
+	public static void main(String[] args) {
+//        MainFormController controller = new MainFormController();
+//        controller.init();
+		Runtime runtime = new Runtime(new CommonCube(5, 4, 2), new Zigzag());
+		runtime.execute();
+	}
 
 }

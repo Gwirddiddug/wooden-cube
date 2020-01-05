@@ -1,10 +1,17 @@
 package org.kaa.runtime;
 
+import org.kaa.model.Figure;
 import org.kaa.model.Puzzle;
+import org.kaa.model.RealSpace;
 import org.kaa.puzzle.figures.Bend;
 import org.kaa.puzzle.figures.Square;
 import org.kaa.puzzle.figures.Zigzag;
-import org.kaa.puzzle.spaces.*;
+import org.kaa.puzzle.spaces.CommonCube;
+import org.kaa.puzzle.spaces.Cube;
+import org.kaa.puzzle.spaces.Cube525;
+import org.kaa.puzzle.spaces.Cube542;
+import org.kaa.puzzle.spaces.Cube544;
+import org.kaa.puzzle.spaces.DoubleBend;
 import org.kaa.solver.PuzzleSolver;
 
 /**
@@ -13,51 +20,61 @@ import org.kaa.solver.PuzzleSolver;
  */
 public class Runtime {
 
-    private Puzzle puzzle = new Puzzle();
+	private Puzzle puzzle = new Puzzle();
 
-    public Runtime() {
-        puzzle5();
-    }
+	public Runtime() {
+		currentPuzzle();
+	}
 
-    public Runtime(Puzzle puzzle) {
-        this.puzzle = puzzle;
-    }
+	public Runtime(Puzzle puzzle) {
+		this.puzzle = puzzle;
+	}
 
-    public Puzzle getPuzzle() {
-        return puzzle;
-    }
+	public Runtime(RealSpace space, Figure figure) {
+		puzzle.setSpace(space);
+		puzzle.setFigure(figure);
+	}
 
-    public void setPuzzle(Puzzle puzzle) {
-        this.puzzle = puzzle;
-    }
+	public Puzzle getPuzzle() {
+		return puzzle;
+	}
 
-    public void execute(){
-        PuzzleSolver solver = new PuzzleSolver();
-        solver.solve(puzzle);
-    }
+	public void setPuzzle(Puzzle puzzle) {
+		this.puzzle = puzzle;
+	}
 
-    private void puzzle1(){
-        puzzle.setSpace(new DoubleBend());
-        puzzle.setFigure(new Bend());
-    }
+	public void execute() {
+		PuzzleSolver solver = new PuzzleSolver();
+		solver.solve(puzzle);
+	}
 
-    private void puzzle2(){
-        puzzle.setSpace(new Cube542());
-        puzzle.setFigure(new Zigzag());
-    }
+	private void puzzle1() {
+		puzzle.setSpace(new DoubleBend());
+		puzzle.setFigure(new Bend());
+	}
 
-    private void puzzle3(){
-        puzzle.setSpace(new Cube544());
-        puzzle.setFigure(new Square());
-    }
+	private void puzzle2() {
+		puzzle.setSpace(new Cube542());
+		puzzle.setFigure(new Zigzag());
+	}
 
-    private void puzzle4(){
-        puzzle.setSpace(new Cube525());
-        puzzle.setFigure(new Zigzag());
-    }
+	private void puzzle3() {
+		puzzle.setSpace(new Cube544());
+		puzzle.setFigure(new Square());
+	}
 
-    private void puzzle5(){
-        puzzle.setSpace(new Cube());
-        puzzle.setFigure(new Zigzag());
-    }
+	private void puzzle4() {
+		puzzle.setSpace(new Cube525());
+		puzzle.setFigure(new Zigzag());
+	}
+
+	private void puzzle5() {
+		puzzle.setSpace(new Cube());
+		puzzle.setFigure(new Zigzag());
+	}
+
+	private void currentPuzzle() {
+		puzzle.setSpace(new CommonCube(5, 4, 2));
+		puzzle.setFigure(new Zigzag());
+	}
 }

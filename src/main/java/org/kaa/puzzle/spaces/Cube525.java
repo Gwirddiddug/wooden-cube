@@ -6,7 +6,7 @@ package org.kaa.puzzle.spaces;
  */
 public class Cube525 extends CommonCube {
 
-    public Cube525() {
-        super(5, 2, 5);
-    }
+	public Cube525() {
+		super(5, 2, 5);
+	}
 }

@@ -1,4 +1,4 @@
-package org.kaa.exceprions;
+package org.kaa.exceptions;
 
 /**
  * Created by Gwirggiddug on 10.02.2015.

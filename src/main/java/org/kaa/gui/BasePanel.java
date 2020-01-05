@@ -1,7 +1,8 @@
 package org.kaa.gui;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -10,33 +11,33 @@ import java.awt.*;
  */
 public class BasePanel extends JPanel {
 
-//    private final Border defaultBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-    private final Border defaultBorder = BorderFactory.createTitledBorder("");
-    private final TitledBorder border;
+	//    private final Border defaultBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+	private final Border defaultBorder = BorderFactory.createTitledBorder("");
+	private final TitledBorder border;
 
-    public BasePanel() {
-        super();
-        setLayout(new BorderLayout(1,1));
+	public BasePanel() {
+		super();
+		setLayout(new BorderLayout(1, 1));
 //        setBorder(defaultBorder);
-        border = new TitledBorder("");
-        setBorder(border);
-    }
+		border = new TitledBorder("");
+		setBorder(border);
+	}
 
-    public BasePanel(String title) {
-        this();
-        setTitle(title);
-    }
+	public BasePanel(String title) {
+		this();
+		setTitle(title);
+	}
 
-    protected void setTitle(String title){
-        border.setTitle(title);
-    }
+	protected void setTitle(String title) {
+		border.setTitle(title);
+	}
 
-    @Override
-    public Component add(Component comp) {
-        Component add = super.add(comp);
-        if (add instanceof JComponent){
-            ((JComponent)comp).setBorder(defaultBorder);
-        }
-        return add;
-    }
+	@Override
+	public Component add(Component comp) {
+		Component add = super.add(comp);
+		if (add instanceof JComponent) {
+			((JComponent) comp).setBorder(defaultBorder);
+		}
+		return add;
+	}
 }

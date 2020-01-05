@@ -12,38 +12,38 @@ import java.awt.event.WindowEvent;
  */
 public class MainFormController {
 
-    private MainForm form;
-    private MainFormListener listener;
+	private MainForm form;
+	private MainFormListener listener;
 
-    public MainFormController() {
-        this.listener = new MainFormListener() {
-            public void run() {
-                Puzzle puzzle = new Puzzle();
-                puzzle.setSpace(getCurrentSpace());
-                puzzle.setFigure(getCurrentFigure());
-                Runtime runtime = new Runtime(puzzle);
-                runtime.execute();
-            }
+	public MainFormController() {
+		this.listener = new MainFormListener() {
+			public void run() {
+				Puzzle puzzle = new Puzzle();
+				puzzle.setSpace(getCurrentSpace());
+				puzzle.setFigure(getCurrentFigure());
+				Runtime runtime = new Runtime(puzzle);
+				runtime.execute();
+			}
 
-            public void close() {
-                form.dispatchEvent(new WindowEvent(form, WindowEvent.WINDOW_CLOSING));
-            }
-        };
+			public void close() {
+				form.dispatchEvent(new WindowEvent(form, WindowEvent.WINDOW_CLOSING));
+			}
+		};
 
-        this.form = new MainForm(listener);
-    }
+		this.form = new MainForm(listener);
+	}
 
-    public void init() {
-        form.init();
-        form.setVisible(true);
-    }
+	public void init() {
+		form.init();
+		form.setVisible(true);
+	}
 
-    private Figure getCurrentFigure() {
-        return form.getFigure();
-    }
+	private Figure getCurrentFigure() {
+		return form.getFigure();
+	}
 
-    public RealSpace getCurrentSpace(){
-        return form.getSpace();
-    }
+	public RealSpace getCurrentSpace() {
+		return form.getSpace();
+	}
 
 }
