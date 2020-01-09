@@ -5,7 +5,6 @@ import org.kaa.solver.ResultPrinter;
 import org.kaa.utils.Utils;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,25 +72,17 @@ public class RealSpace extends Space implements Serializable {
 	 * @param figure allocated figure
 	 */
 	public List<RealSpace> allocateFigure(Figure figure) {
-		List<RealSpace> solutions = new LinkedList<>();
 
 		//если количество ячеек пространства не кратно количеству ячеек фигуры,
 		// то перебор по первой точке не даст максимального заполнения
-		if (optimisticCase(figure)) {
-			List<RealSpace> allocateFigure = allocateFigure(figure, getNextPoint());
-			solutions.addAll(allocateFigure);
-		} else {
-			Collection<SpacePoint> points = getFreePoints();
-			for (SpacePoint spacePoint : points) {
-				solutions.addAll(allocateFigure(figure, spacePoint));
-			}
-		}
-		return solutions;
-	}
-
-	private SpacePoint getNextPoint() {
-		return getFreePoint();
-//		return getFirstPoint();
+		//		if (optimisticCase(figure)) {
+//		} else {
+//			Collection<SpacePoint> points = getFreePoints();
+//			for (SpacePoint spacePoint : points) {
+//				solutions.addAll(allocateFigure(figure, spacePoint));
+//			}
+//		}
+		return allocateFigure(figure, getFreePoint());
 	}
 
 	public void putFigure(Figure figure) {

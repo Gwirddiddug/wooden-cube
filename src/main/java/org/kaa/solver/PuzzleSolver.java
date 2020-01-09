@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,11 +51,13 @@ public class PuzzleSolver implements IPuzzleSolver {
 
 		IOUtils.clear(SOLUTION_FILE);
 		solvePuzzle(this.puzzle);
-//		showResults(puzzle.getSolutions());
+		showResults(puzzle.getSolutions());
 
-		SolutionInfo solutionInfo = new SolutionInfo();
 
 		assert puzzle.getSolutions().size() == 1;
+		verifySolution(puzzle.getSolutions().get(0));
+
+		SolutionInfo solutionInfo = new SolutionInfo();
 //		log.info("Variants:" + puzzle.getSolutions().size());
 		log.info("Total time:" + (System.currentTimeMillis() - startTime));
 		log.info("Max size:" + maxPoolCount);
@@ -64,6 +67,21 @@ public class PuzzleSolver implements IPuzzleSolver {
 		log.info("Duplications:" + duplications);
 
 		return solutionInfo;
+	}
+
+	private void verifySolution(Solution solution) {
+		Set<Figure> figures = solution.figures();
+		HashSet<Integer> unique = new HashSet<>();
+		for (Figure figure : figures) {
+			Set<Integer> compactAtoms = figure.getCompactAtoms();
+			for (Integer compactAtom : compactAtoms) {
+				boolean add = unique.add(compactAtom);
+				if (!add) {
+					throw new RuntimeException("Incorrect solution!");
+				}
+			}
+		}
+		log.info("Correct solution!");
 	}
 
 	//итерационный метод: итерация - добавление очередной фигуры
@@ -100,10 +118,10 @@ public class PuzzleSolver implements IPuzzleSolver {
 			checkVariant(newSpaces, futureVariants);
 
 			if (newSpaces.isEmpty()) {
-				if (++count == MON_INTERVAL) {
+/*				if (++count == MON_INTERVAL) {
 					count = 0;
 					log.info("branches = " + ++branches * MON_INTERVAL);
-				}
+				}*/
 				if (backLog.size() > 0) {
 					newSpaces.add(backLog.getLast());
 				}
@@ -120,7 +138,7 @@ public class PuzzleSolver implements IPuzzleSolver {
 
 	//пытаемся подставить фигуру
 	private void checkVariant(Variants newSpaces, Variants futures) {
-		removeDuplications(futures);
+//		removeDuplications(futures);
 
 		if (newSpaces.isEmpty()) {
 			newSpaces.addAll(futures);
@@ -128,16 +146,6 @@ public class PuzzleSolver implements IPuzzleSolver {
 			backLog.addAll(futures);
 			maxBackLogCount = Math.max(maxBackLogCount, backLog.size());
 		}
-
-      /*
-      if (!futures.isEmpty()) {
-        if ((newSpaces.size() + futures.size()) < POOL_LIMIT || newSpaces.size() == 0) {
-          newSpaces.addAll(futures);
-        } else {
-          backLog.addAll(futures);
-          maxBackLogCount = Math.max(maxBackLogCount, backLog.size());
-        }
-      }*/
 	}
 
 	private void removeDuplications(Variants futures) {
@@ -201,6 +209,7 @@ public class PuzzleSolver implements IPuzzleSolver {
 
 			if (toBacklog) {
 				backLog.add(variant);
+				maxBackLogCount = Math.max(maxBackLogCount, backLog.size());
 				continue;
 			}
 			toBacklog = true;
@@ -270,7 +279,7 @@ public class PuzzleSolver implements IPuzzleSolver {
 		public Variants call() {
 			Variants newSpaces = new Variants();
 			for (Figure posture : postures) {
-				List<RealSpace> newSolutions = solution.buildClone().allocateFigure(posture);
+				List<RealSpace> newSolutions = solution.allocateFigure(posture);
 				newSpaces.addAll(newSolutions);
 			}
 			return newSpaces;
