@@ -1,19 +1,23 @@
 package org.kaa.utils;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.kaa.model.Atom;
 import org.kaa.model.Figure;
 import org.kaa.model.Point;
 import org.kaa.puzzle.figures.Zigzag;
-import junit.framework.TestCase;
 
 import java.util.List;
 
-public class FigureUtilsTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+public class FigureUtilsTest {
 
     private Figure figure = new Figure();
     private int size = 0;
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         figure.addAtom(new Atom(new Point(0, 0, 0)));
         figure.addAtom(new Atom(new Point(0, 1, 0)));
@@ -25,9 +29,9 @@ public class FigureUtilsTest extends TestCase {
 
         List<Figure> figures = FigureUtils.buildPostures(figure);
 
-        assertEquals("Incorrect figures count", 12, figures.size());
+        assertEquals(12, figures.size(), "Incorrect figures count");
         for (Figure figure1 : figures) {
-            assertEquals("Incorrect size", size, figure1.size());
+            assertEquals(size, figure1.size(), "Incorrect size");
         }
     }
 
@@ -69,35 +73,36 @@ public class FigureUtilsTest extends TestCase {
         Figure newFigure90 = FigureUtils.rotateX(figure);
 
         assertEquals(size, newFigure90.size());
-        assertNotNull(newFigure90.getAtom(new Point(0, 0, 0)));
-        assertNotNull(newFigure90.getAtom(new Point(0, 0, 1)));
-        assertNotNull(newFigure90.getAtom(new Point(1, 0, 1)));
+        Assertions.assertNotNull(newFigure90.getAtom(new Point(0, 0, 0)));
+        Assertions.assertNotNull(newFigure90.getAtom(new Point(0, 0, 1)));
+        Assertions.assertNotNull(newFigure90.getAtom(new Point(1, 0, 1)));
 
         Figure newFigure180 = FigureUtils.rotateX(newFigure90);
         assertEquals(size, newFigure180.size());
 
         assertEquals(size, newFigure180.size());
-        assertNotNull(newFigure180.getAtom(new Point(0, 1, 0)));
-        assertNotNull(newFigure180.getAtom(new Point(0, 0, 0)));
-        assertNotNull(newFigure180.getAtom(new Point(1, 0, 0)));
+        Assertions.assertNotNull(newFigure180.getAtom(new Point(0, 1, 0)));
+        Assertions.assertNotNull(newFigure180.getAtom(new Point(0, 0, 0)));
+        Assertions.assertNotNull(newFigure180.getAtom(new Point(1, 0, 0)));
 
 
         Figure newFigure270 = FigureUtils.rotateX(newFigure180);
         assertEquals(size, newFigure270.size());
 
         assertEquals(size, newFigure270.size());
-        assertNotNull(newFigure270.getAtom(new Point(0, 0, 1)));
-        assertNotNull(newFigure270.getAtom(new Point(0, 0, 0)));
-        assertNotNull(newFigure270.getAtom(new Point(1, 0, 0)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(0, 0, 1)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(0, 0, 0)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(1, 0, 0)));
     }
+
 
     public void testRotateX270() {
         Figure newFigure270 = FigureUtils.rotateX270(figure);
         assertEquals(size, newFigure270.size());
 
         assertEquals(size, newFigure270.size());
-        assertNotNull(newFigure270.getAtom(new Point(0, 0, 1)));
-        assertNotNull(newFigure270.getAtom(new Point(0, 0, 0)));
-        assertNotNull(newFigure270.getAtom(new Point(1, 0, 0)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(0, 0, 1)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(0, 0, 0)));
+        Assertions.assertNotNull(newFigure270.getAtom(new Point(1, 0, 0)));
     }
 }

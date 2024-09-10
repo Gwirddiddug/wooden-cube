@@ -1,14 +1,13 @@
 package org.kaa.puzzle;
 
+import org.junit.jupiter.api.Test;
 import org.kaa.model.Puzzle;
 import org.kaa.solver.PuzzleSolver;
-import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * Created by kopylov-aa on 25.09.2016.
  */
-public abstract class PuzzleTestCase extends TestCase {
+public abstract class PuzzleTestCase {
 
     protected PuzzleSolver solver;
 

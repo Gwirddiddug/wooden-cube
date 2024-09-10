@@ -1,6 +1,5 @@
 package org.kaa.solver;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import org.kaa.model.Figure;
 import org.kaa.model.Point;
@@ -74,7 +73,7 @@ public class ResultPrinter {
 	private class CompactFigure implements Comparable<CompactFigure> {
 		TreeSet<Integer> compactAtoms = new TreeSet<>();
 
-		public CompactFigure(@NotNull Figure figure) {
+		public CompactFigure(Figure figure) {
 			compactAtoms.addAll(figure.getCompactAtoms());
 		}
 

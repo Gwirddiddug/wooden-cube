@@ -29,26 +29,6 @@ public abstract class Space implements Serializable {
 		return points.size();
 	}
 
-	/**
-	 * проверяет попадает ли точка в куб и увеличивает его при необходимости
-	 */
-/*	private void checkCubeSize(Point point) {
-		int maxCoordinate = Integer.max(Integer.max(point.x, point.y), point.z);
-		if (maxCoordinate >= cubeSize) {
-			cubeSize = maxCoordinate + 1;
-		}
-		recalculatePoints();
-	}*/
-
-	private void recalculatePoints() {
-		HashMap<Integer, SpacePoint> newMap = new HashMap<>();
-		for (SpacePoint spacePoint : points.values()) {
-			int key = getPointKey(spacePoint);
-			newMap.put(key, spacePoint);
-		}
-		points = newMap;
-	}
-
 	protected abstract int getPointKey(Point point);
 
 	/**
@@ -77,15 +57,10 @@ public abstract class Space implements Serializable {
 		int key = getPointKey(point);
 		if (key >= 0 && !points.containsKey(key)) {
 			points.put(key, point);
-//            points.put(key, null);
 			return true;
 		} else {
 			return false;
 		}
-	}
-
-	public void removePoint(int pointKey) {
-		points.remove(pointKey);
 	}
 
 	public void removePoint(Point point) {
@@ -98,10 +73,6 @@ public abstract class Space implements Serializable {
 
 	public SpacePoint getPoint(int x, int y, int z) {
 		return points.get(Utils.getPointKey(cubeSize, x, y, z));
-	}
-
-	public Iterator<SpacePoint> iterator() {
-		return points.values().iterator();
 	}
 
 	protected boolean hasEnoughSpaceFor(Figure figure) {
@@ -118,29 +89,6 @@ public abstract class Space implements Serializable {
 	 * @return next free point in space
 	 */
 	public SpacePoint getFreePoint() {
-/*        SpacePoint spacePoint = getPoint(0,0,0);
-        if (spacePoint!=null) return spacePoint;
-
-        spacePoint = getPoint(0,0,3);
-        if (spacePoint!=null) return spacePoint;
-
-        spacePoint = getPoint(0, 1, 4);
-        if (spacePoint!=null) return spacePoint;
-        spacePoint = getPoint(4, 0, 0);
-        if (spacePoint!=null) return spacePoint;
-        spacePoint = getPoint(4, 0, 4);
-        if (spacePoint!=null) return spacePoint;
-        spacePoint = getPoint(4, 1, 0);
-        if (spacePoint!=null) return spacePoint;
-
-        spacePoint = getPoint(4, 2, 2);
-        if (spacePoint!=null) return spacePoint;
-        spacePoint = getPoint(4, 4, 4);
-        if (spacePoint!=null) return spacePoint;*/
-
-//		if (!points.isEmpty()) {
-//			return points.values().iterator().next();
-//		}
 		for (SpacePoint point : points.values()) {
 			return point;
 		}
@@ -159,10 +107,6 @@ public abstract class Space implements Serializable {
 	protected Collection<SpacePoint> getFreePoints() {
 //        return points.values().stream().filter(p -> p.isEmpty()).collect(Collectors.toList());
 		return points.values();
-	}
-
-	public int getTotal() {
-		return cubeSize;
 	}
 
 	public int size() {

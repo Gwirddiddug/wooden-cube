@@ -2,22 +2,12 @@ package org.kaa.solver;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kaa.exceptions.WellDoneException;
-import org.kaa.model.Figure;
-import org.kaa.model.Puzzle;
-import org.kaa.model.RealSpace;
-import org.kaa.model.Solution;
-import org.kaa.model.SolutionInfo;
+import org.kaa.model.*;
 import org.kaa.storage.BackLog;
 import org.kaa.utils.IOUtils;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * @author Typhon
@@ -32,7 +22,7 @@ public class PuzzleSolver implements IPuzzleSolver {
 	public static final int SERIALIZATION_PACK_SIZE = 2000;
 	public static final int MON_INTERVAL = 25000;
 	private static final long POOL_LIMIT = 2000;
-	private static final byte MAX_THREADS_COUNT = 8;
+	private static final byte MAX_THREADS_COUNT = 24;
 	private static final long BACKLOG_LIMIT = 5000;
 	private BackLog backLog = new BackLog(BACKLOG_LIMIT, SERIALIZATION_PACK_SIZE, null);
 
@@ -52,7 +42,6 @@ public class PuzzleSolver implements IPuzzleSolver {
 		IOUtils.clear(SOLUTION_FILE);
 		solvePuzzle(this.puzzle);
 		showResults(puzzle.getSolutions());
-
 
 		assert puzzle.getSolutions().size() == 1;
 		verifySolution(puzzle.getSolutions().get(0));
@@ -77,7 +66,7 @@ public class PuzzleSolver implements IPuzzleSolver {
 			for (Integer compactAtom : compactAtoms) {
 				boolean add = unique.add(compactAtom);
 				if (!add) {
-					throw new RuntimeException("Incorrect solution!");
+					throw new RuntimeException("Incorrect solution: " + compactAtom);
 				}
 			}
 		}
@@ -95,9 +84,105 @@ public class PuzzleSolver implements IPuzzleSolver {
 //        executor.start();
 		try {
 			iterate(puzzle);
+//			iterateMulti2(puzzle);
 		} catch (WellDoneException e) {
 //      System.out.println("Success:\n\t" + e.getSolution().getTextView());
 			log.info("Success!");
+		}
+	}
+
+	//перебор вариантов в несколько потоков
+	private void iterateMulti(Puzzle puzzle) {
+		Variants variants = new Variants();
+		variants.add(puzzle.getSpace());
+
+		int count = 0;
+		int branches = 0;
+
+		while (true) {
+			//добавляем ещё одну фигуру
+			Variants newSpaces = new Variants();
+			Variants futureVariants = singleStep(variants);
+
+			checkVariant(newSpaces, futureVariants);
+
+			if (newSpaces.isEmpty()) {
+				while (backLog.size() > 0 && newSpaces.size()<MAX_THREADS_COUNT) {
+					newSpaces.add(backLog.getLast());
+				}
+			}
+
+			maxPoolCount = Math.max(maxPoolCount, newSpaces.size());
+			if (!newSpaces.isEmpty()) {
+				variants = newSpaces;
+			} else {
+				break; //если нет, новых решений, то сохраняем последние полученные результаты
+			}
+		}
+	}
+
+
+	//перебор вариантов в несколько потоков
+	private void iterateMulti2(Puzzle puzzle) {
+
+		backLog.add(puzzle.getSpace());
+		new IterateBacklog().call();
+		try {
+			ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS_COUNT);
+			List<Future<Long>> threads = new ArrayList<>();
+			for (int i = 0; i < MAX_THREADS_COUNT; i++) {
+				threads.add(executor.submit(new IterateBacklog()));
+			}
+			//если нет, новых решений, то сохраняем последние полученные результаты
+            do {
+                Iterator<Future<Long>> threadsIterator = threads.iterator();
+                while (threadsIterator.hasNext()) {
+                    Future<Long> thread = threadsIterator.next();
+                    if (thread.isDone()) {
+                        System.out.println("Thread complete: " + thread.get());
+                        threadsIterator.remove();
+                    }
+                }
+            } while (backLog.size() != 0 || !threads.isEmpty());
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private class IterateBacklog implements Callable<Long> {
+		@Override
+		public Long call() {
+			long count = 0;
+			Variants variants = new Variants();
+			RealSpace variant = backLog.getLast();
+			if (variant == null) {
+				return count;
+			} else {
+				variants.add(variant);
+			}
+
+			while (true) {
+				//добавляем ещё одну фигуру
+				Variants newSpaces = new Variants();
+				Variants futureVariants = singleStep(variants);
+
+				checkVariant(newSpaces, futureVariants);
+
+				if (newSpaces.isEmpty()) {
+					while (backLog.size() > 0 && newSpaces.size()<MAX_THREADS_COUNT) {
+						newSpaces.add(backLog.getLast());
+					}
+				}
+
+				maxPoolCount = Math.max(maxPoolCount, newSpaces.size());
+				if (!newSpaces.isEmpty()) {
+					variants = newSpaces;
+				} else {
+					break; //если нет, новых решений, то сохраняем последние полученные результаты
+				}
+			}
+
+			return count;
 		}
 	}
 
@@ -110,10 +195,12 @@ public class PuzzleSolver implements IPuzzleSolver {
 
 		int count = 0;
 		int branches = 0;
+
+
 		while (!variants.isEmpty()) {
 			//добавляем ещё одну фигуру
 			Variants newSpaces = new Variants();
-			Variants futureVariants = singleStep(variants, executor);
+			Variants futureVariants = singleStep(variants);
 
 			checkVariant(newSpaces, futureVariants);
 
@@ -139,7 +226,6 @@ public class PuzzleSolver implements IPuzzleSolver {
 	//пытаемся подставить фигуру
 	private void checkVariant(Variants newSpaces, Variants futures) {
 //		removeDuplications(futures);
-
 		if (newSpaces.isEmpty()) {
 			newSpaces.addAll(futures);
 		} else {
@@ -196,7 +282,23 @@ public class PuzzleSolver implements IPuzzleSolver {
 	}
 */
 
-	private Variants singleStep(Variants variants, ExecutorService executor) {
+
+	private Variants singleStep(RealSpace variant) {
+		IterateVariant iterateVariant = new IterateVariant(puzzle.getPostures(), variant);
+		Variants call = iterateVariant.call();
+
+		for (RealSpace newVariant : call) {
+			if (newVariant.size() == 0) {
+				puzzle.addSolution(new Solution(variant));
+				throw new WellDoneException(variant);
+			}
+		}
+
+		return call;
+	}
+
+
+	private Variants singleStep(Variants variants) {
 		boolean toBacklog = false;
 
 		Variants newSpaces = new Variants();
@@ -214,24 +316,58 @@ public class PuzzleSolver implements IPuzzleSolver {
 			}
 			toBacklog = true;
 
-
 			IterateVariant iterateVariant = new IterateVariant(puzzle.getPostures(), variant);
+
 			Variants call = iterateVariant.call();
 			newSpaces.addAll(call);
-//      for (Figure posture : puzzle.getPostures()) {
-//        List<RealSpace> newSolutions = variant.clone().allocateFigure(posture);
-//        newSpaces.addAll(newSolutions);
-//      }
-
-			//создаём объект для выполнения в отдельном потоке
-//        Callable<Variants> iterateResults = new IterateVariant(postures, variant);
-//        Future<Variants> iterateVariant = executor.submit(iterateResults);
-//        futureVariants.add(iterateVariant);
 		}
+
 		return newSpaces;
-//    return futureVariants;
 	}
 
+
+
+	private Variants singleStepMulti(Variants variants, ExecutorService executor) {
+		boolean toBacklog = false;
+		Variants newSpaces = new Variants();
+		HashSet<Future<Variants>> futures = new HashSet<>();
+
+		for (RealSpace variant : variants) {
+			if (variant.size() == 0) {
+				puzzle.addSolution(new Solution(variant));
+				throw new WellDoneException(variant);
+			}
+
+			if (toBacklog) {
+				backLog.add(variant);
+				maxBackLogCount = Math.max(maxBackLogCount, backLog.size());
+				continue;
+			}
+			toBacklog = true;
+
+			IterateVariant iterateVariant = new IterateVariant(puzzle.getPostures(), variant);
+
+			Future<Variants> submit = executor.submit(iterateVariant);
+			futures.add(submit);
+		}
+
+		while (!futures.isEmpty()) {
+			Iterator<Future<Variants>> iterator = futures.iterator();
+			while (iterator.hasNext()) {
+				Future<Variants> future = iterator.next();
+				if (future.isDone()) {
+					try {
+						newSpaces.addAll(future.get());
+						iterator.remove();
+					} catch (InterruptedException | ExecutionException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
+
+		return newSpaces;
+	}
 
  /* private Mono<List<Variants>> nextStep2(Puzzle puzzle, List<Figure> postures, Variants variants, ExecutorService executor) {
     List<Future<Variants>> futureVariants = new ArrayList<>();
@@ -277,11 +413,14 @@ public class PuzzleSolver implements IPuzzleSolver {
 
 		@Override
 		public Variants call() {
+			long start = System.currentTimeMillis();
+
 			Variants newSpaces = new Variants();
 			for (Figure posture : postures) {
 				List<RealSpace> newSolutions = solution.allocateFigure(posture);
 				newSpaces.addAll(newSolutions);
 			}
+//			System.out.println(System.currentTimeMillis() - start);
 			return newSpaces;
 		}
 	}

@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * @author Typhon
  * @since 22.11.2014
- * Базовое представленеи для пространства размещения
+ * Базовое представление для пространства размещения
  */
 public class RealSpace extends Space implements Serializable {
 

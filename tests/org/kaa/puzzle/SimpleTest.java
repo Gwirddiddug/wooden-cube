@@ -1,6 +1,6 @@
 package org.kaa.puzzle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kaa.model.Puzzle;
 import org.kaa.model.Solution;
 import org.kaa.puzzle.figures.Bend;
@@ -8,10 +8,11 @@ import org.kaa.puzzle.figures.Zigzag;
 import org.kaa.puzzle.spaces.CommonCube;
 import org.kaa.puzzle.spaces.Cube321;
 import org.kaa.solver.PuzzleSolver;
+import org.kaa.puzzle.figures.Teewee;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by kopylov-aa on 25.09.2016.
@@ -29,18 +30,54 @@ public class SimpleTest {
         solver.solve(puzzle);
 
         List<Solution> solutions = puzzle.getSolutions();
-        assertEquals("Wrong solutions count", 2, solutions.size());
+        assertEquals(2, solutions.size(), "Wrong solutions count");
     }
 
     @Test
-    public void testPuzzle322Bend(){
+    public void testPuzzle554Bend(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,4,4));
+        puzzle.setSpace(new CommonCube(5,5,5));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);
 
         List<Solution> solutions = puzzle.getSolutions();
-        assertEquals("Wrong solutions count", 16, solutions.size());
+        assertEquals(1, solutions.size(), "Wrong solutions count");
+    }
+
+    @Test
+    public void testTeewee444(){
+        Puzzle puzzle = new Puzzle();
+        puzzle.setSpace(new CommonCube(4,4,4));
+        puzzle.setFigure(new Teewee());
+
+        solver.solve(puzzle);
+
+        List<Solution> solutions = puzzle.getSolutions();
+        assertEquals(1, solutions.size(), "Wrong solutions count");
+    }
+
+    @Test
+    public void testTeewee663(){
+        Puzzle puzzle = new Puzzle();
+        puzzle.setSpace(new CommonCube(6,6,2));
+        puzzle.setFigure(new Teewee());
+
+        solver.solve(puzzle);
+
+        List<Solution> solutions = puzzle.getSolutions();
+        assertEquals(1, solutions.size(), "Wrong solutions count");
+    }
+
+    @Test
+    public void testTeewee666(){
+        Puzzle puzzle = new Puzzle();
+        puzzle.setSpace(new CommonCube(6,6,6));
+        puzzle.setFigure(new Teewee());
+
+        solver.solve(puzzle);
+
+        List<Solution> solutions = puzzle.getSolutions();
+        assertEquals(1, solutions.size(), "Wrong solutions count");
     }
 }

@@ -1,8 +1,9 @@
 package org.kaa.model;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SpaceTest extends TestCase {
+public class SpaceTest {
 
     public void testPointKey() {
         Space space = new RealSpace(3);

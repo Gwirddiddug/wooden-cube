@@ -41,7 +41,7 @@ public class IOUtils {
 	public static void saveSolution(Solution solution, String fileName) {
 		ResultPrinter printer = new ResultPrinter(solution);
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
-			bufferedWriter.write("--------------------------");
+			bufferedWriter.write("--------------------------\n");
 			bufferedWriter.write(printer.buildSolutionOutput(solution));
 		} catch (IOException e) {
 			log.error("Fail on save solution", e);
