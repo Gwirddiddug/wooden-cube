@@ -22,6 +22,7 @@ public class FigureUtils {
 	 * @return список положений фигуры
 	 */
 	public static List<Figure> buildPostures(Figure figure) {
+
 		class Postures extends LinkedList<Figure> {
 			@Override
 			public boolean add(Figure figure) {

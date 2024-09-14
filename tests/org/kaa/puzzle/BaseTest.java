@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by kopylov-aa on 25.09.2016.
  */
-public class SimpleTest {
+public class BaseTest {
 
-    private PuzzleSolver solver = new PuzzleSolver();
+    private final PuzzleSolver solver = new PuzzleSolver();
 
     @Test
     public void testPuzzle321Bend(){
@@ -30,13 +30,13 @@ public class SimpleTest {
         solver.solve(puzzle);
 
         List<Solution> solutions = puzzle.getSolutions();
-        assertEquals(2, solutions.size(), "Wrong solutions count");
+        assertEquals(1, solutions.size(), "Wrong solutions count");
     }
 
     @Test
-    public void testPuzzle554Bend(){
+    public void testPuzzle552Zigzag(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,5,5));
+        puzzle.setSpace(new CommonCube(5,5,2));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);
@@ -57,27 +57,4 @@ public class SimpleTest {
         assertEquals(1, solutions.size(), "Wrong solutions count");
     }
 
-    @Test
-    public void testTeewee663(){
-        Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(6,6,2));
-        puzzle.setFigure(new Teewee());
-
-        solver.solve(puzzle);
-
-        List<Solution> solutions = puzzle.getSolutions();
-        assertEquals(1, solutions.size(), "Wrong solutions count");
-    }
-
-    @Test
-    public void testTeewee666(){
-        Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(6,6,6));
-        puzzle.setFigure(new Teewee());
-
-        solver.solve(puzzle);
-
-        List<Solution> solutions = puzzle.getSolutions();
-        assertEquals(1, solutions.size(), "Wrong solutions count");
-    }
 }

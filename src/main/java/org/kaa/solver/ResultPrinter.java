@@ -1,11 +1,8 @@
 package org.kaa.solver;
 
-import lombok.Getter;
-import org.kaa.model.Figure;
-import org.kaa.model.Point;
-import org.kaa.model.Puzzle;
-import org.kaa.model.RealSpace;
+import org.kaa.model.*;
 
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,14 +14,14 @@ import java.util.stream.Collectors;
 public class ResultPrinter {
 
 	private final boolean SHOW_FIGURES = true;
-	private int measure = 5;
+	private final RealSpace space;
 
 	public ResultPrinter(RealSpace space) {
-		measure = space.getCubeSize();
+		this.space = space;
 	}
 
 	public ResultPrinter(Puzzle puzzle) {
-		measure = puzzle.getSpace().getCubeSize();
+		this.space = puzzle.getSpace();
 	}
 
 	public void printSolution(RealSpace solution) {
@@ -55,34 +52,34 @@ public class ResultPrinter {
 		}
 
 		if (SHOW_FIGURES) {
-			int order = 0;
-			Set<Figure> figures = solution.figures();
-
-			TreeSet<CompactFigure> sortedFigures = figures.stream().map(CompactFigure::new).collect(Collectors.toCollection(TreeSet::new));
+			int index = 0;
+			TreeSet<CompactFigure> sortedFigures = new TreeSet<>(solution.getCompactFigures());
 
 			for (CompactFigure figure : sortedFigures) {
-				order++;
-				result.append(String.format("Figure#%s:\t%s", order, buildFigureOutput(figure)));
+
+				index++;
+				result.append(String.format("Figure#%s:\t%s", index, buildFigureOutput(figure)));
 				result.append("\n");
 			}
 		}
 		return result.toString();
 	}
 
-	@Getter
-	private class CompactFigure implements Comparable<CompactFigure> {
-		TreeSet<Integer> compactAtoms = new TreeSet<>();
+	public void printFigures(Iterable<Figure> figures) {
+		int index = 0;
 
-		public CompactFigure(Figure figure) {
-			compactAtoms.addAll(figure.getCompactAtoms());
+		TreeSet<CompactFigure> sortedFigures = new TreeSet<>();
+		for (Figure figure : figures) {
+			sortedFigures.add(new RealFigure(figure, space).buildCompact());
 		}
-
-		@Override
-		public int compareTo(CompactFigure o) {
-			return Integer.compare(this.compactAtoms.first(), o.getCompactAtoms().first());
+		StringWriter result = new StringWriter();
+		for (CompactFigure figure : sortedFigures) {
+			index++;
+			result.append(String.format("Figure#%s:\t%s", index, buildFigureOutput(figure)));
+			result.append("\n");
 		}
+		System.out.println(result);
 	}
-
 
 
 	private String buildFigureOutput(CompactFigure figure) {
@@ -91,7 +88,7 @@ public class ResultPrinter {
 	}
 
 
-	private String buildFigureOutput(Figure part) {
+	private String buildFigureOutput(RealFigure part) {
 		StringBuilder output = new StringBuilder();
 		output.append("{");
 
@@ -104,11 +101,5 @@ public class ResultPrinter {
 		output.append("}");
 		return part.getName() + output;
 	}
-
-	public String buildPointOutput(Point point) {
-		return String.valueOf(point.getIndex(measure));
-//        return String.format("\n(%s,%s,%s)", point.x+1, point.y+1, point.z+1);
-	}
-
 
 }

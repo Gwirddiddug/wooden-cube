@@ -8,10 +8,12 @@ public class Main {
 //        MainFormController controller = new MainFormController();
 //        controller.init();
 //		CommonCube space = new CommonCube(5, 5, 5);
-		CommonCube space = new CommonCube(5, 5, 4);
+//		CommonCube space = new CommonCube(5, 4, 4);
+		CommonCube space = new CommonCube(4, 5, 2);
 //		CommonCube space = new CommonCube(5, 4, 4);
 //		CommonCube space = new CommonCube(5, 5, 2);
 		Runtime runtime = new Runtime(space, new Zigzag());
+//		Runtime runtime = new Runtime(space, new Teewee());
 		runtime.execute();
 	}
 

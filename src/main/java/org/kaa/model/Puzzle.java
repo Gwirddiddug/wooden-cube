@@ -21,14 +21,14 @@ import java.util.List;
 public class Puzzle {
 
 	//заполняемая область
-	private RealSpace space = new RealSpace(0);
+	private RealSpace space = new RealSpace(0, 0,0);
 	//фигура, которой заполняется область
 	private Figure figure = new Figure();
 
 	List<Figure> postures = FigureUtils.buildPostures(figure);
 
 	//полученные решения
-	private List<Solution> solutions = new LinkedList<>();
+	private LinkedList<Solution> solutions = new LinkedList<>();
 
 	public void setFigure(Figure figure) {
 		this.figure = figure;
@@ -56,5 +56,13 @@ public class Puzzle {
 			return false;
 		}
 		return true;
+	}
+
+	public void setSolution(RealSpace solution) {
+		addSolution(new Solution(solution));
+	}
+
+	public Solution getSolution() {
+		return solutions.getFirst();
 	}
 }

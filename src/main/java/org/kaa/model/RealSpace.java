@@ -1,5 +1,6 @@
 package org.kaa.model;
 
+import lombok.Getter;
 import org.kaa.exceptions.FilledSpacePointException;
 import org.kaa.solver.ResultPrinter;
 import org.kaa.utils.Utils;
@@ -17,17 +18,26 @@ import java.util.Set;
  * @since 22.11.2014
  * Базовое представление для пространства размещения
  */
+@Getter
 public class RealSpace extends Space implements Serializable {
 
-	protected Set<Figure> figures = new HashSet<>();
 	protected Set<CompactFigure> compactFigures = new HashSet<>();
 
-	public RealSpace(int cubeSize) {
-		super(cubeSize);
+	public RealSpace(int x, int y, int z) {
+		super(x, y, z);
+	}
+
+	public RealSpace(RealSpace space) {
+		super(space.getAbscissus(), space.getOrdinatus(), space.getApplicata());
+		this.compactFigures = space.getCompactFigures();
+	}
+
+	public RealSpace(int i) {
+		super(i, i, i);
 	}
 
 	public RealSpace buildClone() {
-		RealSpace clone = new RealSpace(getCubeSize());
+		RealSpace clone = new RealSpace(abscissus, ordinatus, applicata);
 		clone.points = new HashMap<>(points);
 		clone.compactFigures = new HashSet<>(compactFigures);
 		return clone;
@@ -35,7 +45,7 @@ public class RealSpace extends Space implements Serializable {
 
 	@Override
 	protected int getPointKey(Point point) {
-		return Utils.getPointKey(getCubeSize(), point);
+		return getPointKey(getCubeSize(), point);
 	}
 
 	public int getCubeSize() {
@@ -43,7 +53,7 @@ public class RealSpace extends Space implements Serializable {
 	}
 
 	/**
-	 * Определяет использовать ли оптимистичный сценарий заполнения или пессимистичный
+	 * Определяет использовать оптимистичный сценарий заполнения или пессимистичный
 	 */
 	private boolean optimisticCase(Figure figure) {
 		return size() % figure.size() == 0;
@@ -86,6 +96,10 @@ public class RealSpace extends Space implements Serializable {
 	}
 
 	public void putFigure(Figure figure) {
+		putFigure(new RealFigure(figure, this));
+	}
+
+	public void putFigure(RealFigure figure) {
 		Iterator<Atom> iterator = figure.atomator();
 		while (iterator.hasNext()) {
 			Atom next = iterator.next();
@@ -98,102 +112,14 @@ public class RealSpace extends Space implements Serializable {
 		addFigure(figure);
 	}
 
-	private void addFigure(Figure figure) {
-		figures.add(figure);
-		compactFigures.add(new CompactFigure(figure));
-	}
-
-/*
-  public boolean isAllocatableFigure(Figure figure) {
-        List<SpacePoint> points = new LinkedList<>();
-        if (optimisticCase(figure)) {
-            points.add(getFreePoint());
-        } else {
-            points = getFreePoints();
-        }
-
-        for (SpacePoint spacePoint : points) {
-            if (isAllocatableFigure(figure, spacePoint)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-*/
-
-	public boolean isAllocatableFigure(Figure figure, SpacePoint point) {
-		Iterator<Atom> iterator = figure.atomator();
-		while (iterator.hasNext()) {
-			Atom next = iterator.next();
-			Point zeroPoint = getNewZeroPoint(point, next);
-			Figure adaptedFigure = figure.recalculateForNewZeroPoint(zeroPoint);
-
-			if (hasEnoughSpaceFor(adaptedFigure)) {
-				return true;
-			}
-		}
-		return false;
+	private void addFigure(RealFigure figure) {
+		compactFigures.add(figure.buildCompact());
 	}
 
 	private Point getNewZeroPoint(Point space, Point figure) {
 		return new Point(space.x - figure.x, space.y - figure.y, space.z - figure.z);
 	}
 
-	public Set<Figure> figures() {
-		if (figures.size() != compactFigures.size()) {
-			figures.clear();
-			for (CompactFigure compactFigure : compactFigures) {
-				figures.add(new Figure(compactFigure, getCubeSize()));
-			}
-		}
-		return figures;
-	}
-
-	/**
-	 * @return текстовое представление пространства
-	 */
-	public String getView() {
-		return buildStringView();
-	}
-
-	private String buildStringView() {
-//		String filledSquare = "\u25A0";
-//		Point minPoint = getMinPoint();
-//		Point maxPoint = getMaxPoint();
-		///todo сделать корректное отображение 3D
-/*
-		StringBuilder coords = new StringBuilder("{");
-		for (int y = maxPoint.y; y >= minPoint.y; y--) {
-//			String line = "";
-			StringBuilder line = new StringBuilder();
-			for (int x = minPoint.x; x <= maxPoint.x; x++) {
-				for (int z = minPoint.z; z <= maxPoint.z; z++) {
-					SpacePoint point = getPoint(x + 1, y + 1, z + 1);
-					if (point == null) {
-						line.append(" ");
-					} else {
-						coords.append(point);
-						coords.append(",");
-						line.append(filledSquare);
-					}
-				}
-			}
-//			output.append(line).append("\n");
-		}
-		if (coords.length() > 1) {
-//			coords = coords.substring(1, coords.length() - 1);
-			coords.delete(coords.length(), coords.length());
-		}
-		coords.append("}");*/
-		StringBuilder output = new StringBuilder();
-		int order = 0;
-		for (Figure part : figures()) {
-			order++;
-			output.append(String.format("\nFigure#%s:\n%s", order, part));
-		}
-		return output.toString();
-	}
 
 
 	/**
@@ -217,12 +143,12 @@ public class RealSpace extends Space implements Serializable {
 
 	public Integer[][] preSerialize() {
 		int figureIndex = 0;
-		Integer[][] arrFigures = new Integer[figures().size()][];
-		for (Figure figure : figures()) {
+		Integer[][] arrFigures = new Integer[this.compactFigures.size()][];
+		for (CompactFigure figure : this.compactFigures) {
 			int atomIndex = 0;
-			Integer[] arrAtoms = new Integer[figure.atoms().size()];
-			for (Atom atom : figure.atoms()) {
-				arrAtoms[atomIndex++] = atom.getIndex(getCubeSize());
+			Integer[] arrAtoms = new Integer[figure.getCompactAtoms().size()];
+			for (int atom : figure.getCompactAtoms()) {
+				arrAtoms[atomIndex++] = atom;
 			}
 			arrFigures[figureIndex++] = arrAtoms;
 		}

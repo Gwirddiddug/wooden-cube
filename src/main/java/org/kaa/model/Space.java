@@ -1,6 +1,6 @@
 package org.kaa.model;
 
-import org.kaa.utils.Utils;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -8,22 +8,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import static org.kaa.solver.PuzzleSolver.FIXED_MEASURE;
-
 /**
  * @author Typhon
  * @since 01.11.2014
  * Представление заполняемой фигуры (полости)
  * Работает только с положительными точками
  */
+@Getter
 public abstract class Space implements Serializable {
 
 	protected HashMap<Integer, SpacePoint> points = new HashMap<>();
 	protected final int cubeSize; //размер куба в котором размещена фигура
+	protected final int abscissus; //размер по оси X
+	protected final int ordinatus; //размер по оси
+	protected final int applicata; //размер по оси X
 
-	protected Space(int cubeSize) {
-		this.cubeSize = cubeSize + 1;
-	}
+	protected Space(int abscissus, int ordinatus, int applicata) {
+		this.cubeSize = Math.max(Math.max(abscissus, ordinatus), applicata);
+        this.abscissus = abscissus;
+        this.ordinatus = ordinatus;
+        this.applicata = applicata;
+    }
 
 	public int getSize() {
 		return points.size();
@@ -43,10 +48,6 @@ public abstract class Space implements Serializable {
 			return false;
 		}
 		return points.containsKey(pointKey);
-	}
-
-	public boolean addPoint(int pointKey) {
-		return addPoint(new SpacePoint(Utils.getPointByKey(pointKey, FIXED_MEASURE)));
 	}
 
 	public boolean addPoint(Point point) {
@@ -72,7 +73,7 @@ public abstract class Space implements Serializable {
 	}
 
 	public SpacePoint getPoint(int x, int y, int z) {
-		return points.get(Utils.getPointKey(cubeSize, x, y, z));
+		return points.get(getPointKey(x, y, z));
 	}
 
 	protected boolean hasEnoughSpaceFor(Figure figure) {
@@ -121,6 +122,26 @@ public abstract class Space implements Serializable {
 		return cubeSize * cubeSize * cubeSize - size();
 	}
 
+
+	public int getPointKey(int cubeSize, Point point) {
+		return getPointKey(point.x, point.y, point.z);
+	}
+
+
+	/**
+	 * Формирует числовой код идентифицирующий точку в конкретном пространстве (компактное представление)
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return порядковый номер точки в пространстве
+	 */
+	public int getPointKey(int x, int y, int z) {
+		if (x < 0 || y < 0 || z < 0) return -1;
+		if (x >= abscissus || y >= ordinatus || z >= applicata) return -1;
+		return abscissus * ordinatus * z + abscissus * y + x;
+	}
+
 	public boolean equals(Space space) {
 		if (space.cubeSize != cubeSize) return false;
 		if (space.size() != size()) return false;
@@ -140,5 +161,13 @@ public abstract class Space implements Serializable {
 			builder.append(key.toString());
 		}
 		return builder.toString().hashCode();
+	}
+
+	public Atom getPointByKey(Integer key) {
+        int z = key / (abscissus * ordinatus);
+		int y = (key - z * abscissus * ordinatus) / abscissus;
+		int x = key - z * abscissus * ordinatus - y * abscissus;
+
+		return new Atom(x, y, z);
 	}
 }

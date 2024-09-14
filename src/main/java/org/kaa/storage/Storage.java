@@ -31,26 +31,23 @@ public class Storage extends AbstractStorage<RealSpace> {
 
 	@Override
 	public boolean add(RealSpace realSpace) {
-		boolean add = super.add(realSpace);
-		checkSize();
-		return add;
+        //		checkSize();
+		return super.add(realSpace);
 	}
 
 	@Override
 	public boolean addAll(Collection<RealSpace> units) {
-		boolean add = super.addAll(units);
-		checkSize();
-		return add;
+        //		checkSize();
+		return super.addAll(units);
 	}
 
 	@Override
-	protected boolean checkSize() {
+	protected void checkSize() {
 		if (size() > backlogLimit) {
 			serialize();
 		} else if (size() < backlogLimit - serializationPackSize) {
 			deserialize();
 		}
-		return false;
 	}
 
 	/**

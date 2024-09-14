@@ -5,7 +5,7 @@ package org.kaa.model;
  */
 public class Solution extends RealSpace {
 	public Solution(RealSpace variant) {
-		super(variant.getCubeSize());
+		super(variant);
 //        super.figures = variant.figures;
 		super.compactFigures = variant.compactFigures;
 	}

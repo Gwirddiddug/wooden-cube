@@ -2,14 +2,9 @@ package org.kaa.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.kaa.utils.Utils;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,8 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 public class Figure implements Serializable {
 
-	private List<Atom> atoms = new LinkedList<>();
-	private Set<Integer> compactAtoms = new HashSet<>();
+	protected List<Atom> atoms = new LinkedList<>();
 
 	//RC - rotations count - how much times figure rotate by any axis
 	private int xRC = 0;
@@ -32,12 +26,7 @@ public class Figure implements Serializable {
 	public Figure() {
 	}
 
-	public Figure(CompactFigure compactFigure, int cubeSize) {
-		compactAtoms = new HashSet<>(compactFigure.getCompactAtoms());
-		for (Integer code : compactAtoms) {
-			atoms.add(Utils.getPointByKey(code, cubeSize));
-		}
-	}
+
 
 	public void incXRC() {
 		this.xRC++;
@@ -73,17 +62,13 @@ public class Figure implements Serializable {
 		return atoms;
 	}
 
-	public Set<Integer> getCode() {
-		return compactAtoms;
-	}
-
 	@Override
 	public Figure clone() {
 		Figure clone = new Figure();
 		for (Atom atom : atoms) {
 			clone.addAtom(atom.clone());
 		}
-		clone.setCompactAtoms(new HashSet<>(compactAtoms));
+
 		clone.xRC = xRC;
 		clone.yRC = yRC;
 		clone.zRC = zRC;
@@ -106,6 +91,23 @@ public class Figure implements Serializable {
 			atom.getPoint().z += zeroPoint.z;
 		}
 		return recalculated;
+	}
+
+	/*
+	* returns самую близкую к центру точку
+	 */
+	public Atom getMinAtom() {
+		int minRadius = Integer.MAX_VALUE;
+		Atom minAtom = null;
+		for (Atom atom : atoms) {
+			int radius = atom.getRadius();
+			if (minRadius > radius) {
+				minRadius = radius;
+				minAtom = atom;
+			}
+		}
+
+		return minAtom;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package org.kaa.utils;
 
-import org.kaa.model.Atom;
 import org.kaa.model.Point;
 
 import java.util.Collection;
@@ -12,25 +11,6 @@ import java.util.Collection;
  */
 public class Utils {
 
-	public static int getPointKey(int cubeSize, Point point) {
-		return getPointKey(cubeSize, point.x, point.y, point.z);
-	}
-
-
-	/**
-	 * Формирует числовой код идентифицирующий точку в конкретном пространстве (компактное представление)
-	 *
-	 * @param cubeSize размер максимального ребра паралллепипида
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public static int getPointKey(int cubeSize, int x, int y, int z) {
-		if (x < 0 || y < 0 || z < 0) return -1;
-		if (x >= cubeSize || y >= cubeSize || z >= cubeSize) return -1;
-		return cubeSize * cubeSize * x + cubeSize * y + z;
-	}
 
 	/**
 	 * Формирует точку с минимальными значеними по всем координатам
@@ -56,6 +36,7 @@ public class Utils {
 		return new Point(minX, minY, minZ);
 	}
 
+
 	/**
 	 * Формирует точку с максимальными значеними по всем координатам
 	 *
@@ -75,11 +56,4 @@ public class Utils {
 		return new Point(maxX, maxY, maxZ);
 	}
 
-	public static Atom getPointByKey(Integer compactPoint, int cubeSize) {
-		int x = compactPoint / cubeSize;
-		int y = (compactPoint - x) / cubeSize;
-		int z = compactPoint - x - y;
-
-		return new Atom(x, y, z);
-	}
 }

@@ -1,22 +1,13 @@
 package org.kaa.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.kaa.model.Atom;
 import org.kaa.model.Figure;
 import org.kaa.model.RealSpace;
 import org.kaa.model.Solution;
 import org.kaa.solver.PuzzleSolver;
 import org.kaa.solver.ResultPrinter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,9 +70,8 @@ public class IOUtils {
 			RealSpace solution = space.buildClone();
 			for (Integer[] atoms : figures) {
 				Figure figure = new Figure();
-				for (Integer integer : atoms) {
-					Atom atom = Atom.fromIndex(integer, space.getCubeSize());
-					figure.addAtom(atom);
+				for (Integer key : atoms) {
+					figure.addAtom(space.getPointByKey(key));
 				}
 				solution.putFigure(figure);
 			}

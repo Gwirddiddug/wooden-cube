@@ -28,6 +28,11 @@ public class Point implements Serializable {
 		this.z = z;
 	}
 
+	//вычисляет удаление точки от центра в попугаях
+	public int getRadius() {
+		return x^2 + y^2 + z^2;
+	}
+
 	@Override
 	protected Point clone() {
 		return new Point(x, y, z);
