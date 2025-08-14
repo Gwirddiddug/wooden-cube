@@ -4,12 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.kaa.exceptions.OutOfUnitsException;
 import org.kaa.model.RealSpace;
 
-import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.*;
 
 @Slf4j
-public class MultiThreadStorage  extends RealSpaceStorage {
-    private final ConcurrentLinkedDeque<RealSpace> items = new ConcurrentLinkedDeque<>();
+public class HashStorage extends RealSpaceStorage {
+    private final LinkedHashSet<RealSpace> items = new LinkedHashSet<>();
+
+//    private final ConcurrentLinkedDeque<RealSpace> items = new ConcurrentLinkedDeque<>();
 
     @Override
     public synchronized RealSpace getFirst() throws OutOfUnitsException {

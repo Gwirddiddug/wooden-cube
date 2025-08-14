@@ -42,6 +42,26 @@ public class Storage extends AbstractStorage<RealSpace> {
 	}
 
 	@Override
+	public void clear() {
+
+	}
+
+	@Override
+	public void saveSolution(RealSpace solution) {
+
+	}
+
+	@Override
+	public RealSpace getSolution() {
+		return null;
+	}
+
+	@Override
+	public int getMaxBacklogSize() {
+		return 0;
+	}
+
+	@Override
 	protected void checkSize() {
 		if (size() > backlogLimit) {
 			serialize();

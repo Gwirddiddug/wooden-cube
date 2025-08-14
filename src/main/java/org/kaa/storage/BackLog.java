@@ -17,4 +17,8 @@ public class BackLog extends Storage {
 		this.serializationPackSize = serializationPackSize;
 	}
 
+	@Override
+	public void saveSolution(RealSpace solution) {
+
+	}
 }

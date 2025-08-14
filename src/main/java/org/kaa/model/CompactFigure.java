@@ -31,7 +31,7 @@ public class CompactFigure implements Comparable<CompactFigure> {
 
 	//суммирует индексы точек, чтобы определить какая фигура должна быть раньше в сортировке.
     public int getParrot() {
-		return compactAtoms.stream().map(p->p^2).mapToInt(Integer::intValue).sum();
+		return compactAtoms.stream().map(p->p*p).mapToInt(Integer::intValue).sum();
 	}
 
 	//ищет точку с минимальным индексом

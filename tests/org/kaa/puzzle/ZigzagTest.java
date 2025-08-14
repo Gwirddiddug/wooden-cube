@@ -22,7 +22,7 @@ public class ZigzagTest {
     @Test
     public void testPuzzle(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,5,2));
+        puzzle.setSpace(new CommonCube(5,4,5));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);
@@ -70,7 +70,7 @@ public class ZigzagTest {
     @Test
     public void testPuzzle554(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,5,4));
+        puzzle.setSpace(new CommonCube(5,6,4));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);
@@ -82,7 +82,7 @@ public class ZigzagTest {
     @Test
     public void testPuzzle555(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(5,5,5));
+        puzzle.setSpace(new CommonCube(5,4,6));
         puzzle.setFigure(new Zigzag());
 
         solver.solve(puzzle);

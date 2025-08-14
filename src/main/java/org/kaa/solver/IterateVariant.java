@@ -25,14 +25,15 @@ public class IterateVariant implements Callable<Variants> {
 
     @Override
     public Variants call() {
-//			long start = System.currentTimeMillis();
+        return allocate(solution);
+    }
 
+    public Variants allocate(RealSpace solution) {
         Variants newSpaces = new Variants();
         for (Figure posture : postures) {
             List<RealSpace> newSolutions = solution.allocateFigure(posture);
             newSpaces.addAll(newSolutions);
         }
-//			System.out.println(System.currentTimeMillis() - start);
         return newSpaces;
     }
 }

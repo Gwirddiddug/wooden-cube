@@ -30,7 +30,7 @@ public class Point implements Serializable {
 
 	//вычисляет удаление точки от центра в попугаях
 	public int getRadius() {
-		return x^2 + y^2 + z^2;
+		return x*x + y*y + z*z;
 	}
 
 	@Override

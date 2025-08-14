@@ -22,6 +22,7 @@ import java.util.Set;
 public class RealSpace extends Space implements Serializable {
 
 	protected Set<CompactFigure> compactFigures = new HashSet<>();
+	protected int level = 0;
 
 	public RealSpace(int x, int y, int z) {
 		super(x, y, z);
@@ -112,14 +113,18 @@ public class RealSpace extends Space implements Serializable {
 		addFigure(figure);
 	}
 
+	public void addCompactFigure(CompactFigure figure) {
+		compactFigures.add(figure);
+	}
+
 	private void addFigure(RealFigure figure) {
 		compactFigures.add(figure.buildCompact());
+		level = compactFigures.size();
 	}
 
 	private Point getNewZeroPoint(Point space, Point figure) {
 		return new Point(space.x - figure.x, space.y - figure.y, space.z - figure.z);
 	}
-
 
 
 	/**
@@ -132,8 +137,14 @@ public class RealSpace extends Space implements Serializable {
 	/**
 	 * Формирует абстрактную точку с максимальными значеними по всем координатам
 	 */
-	public Point getMaxPoint() {
-		return Utils.getMaxPoint(points.values());
+	public int getMaxPointKey() {
+		int maxKey = 0;
+		for (CompactFigure figure : compactFigures) {
+			for (int key : figure.compactAtoms) {
+				maxKey = Math.max(maxKey, key);
+			}
+		}
+		return maxKey;
 	}
 
 	public String getTextView() {

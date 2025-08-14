@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.kaa.exceptions.WellDoneException;
 import org.kaa.model.Puzzle;
 import org.kaa.model.Solution;
-import org.kaa.solver.Starter;
 import org.kaa.solver.workers.SingleWorker;
 
 @Slf4j

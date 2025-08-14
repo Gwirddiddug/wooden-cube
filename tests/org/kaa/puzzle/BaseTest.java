@@ -46,9 +46,9 @@ public class BaseTest {
     }
 
     @Test
-    public void testTeewee444(){
+    public void testTeewee662(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(4,4,4));
+        puzzle.setSpace(new CommonCube(6,6,2));
         puzzle.setFigure(new Teewee());
 
         solver.solve(puzzle);

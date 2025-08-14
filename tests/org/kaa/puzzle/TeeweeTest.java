@@ -22,7 +22,7 @@ public class TeeweeTest {
     @Test
     public void testTeewee444(){
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(4,4,6));
+        puzzle.setSpace(new CommonCube(4,4,4));
         puzzle.setFigure(new Teewee());
 
         solver.solve(puzzle);
@@ -34,7 +34,7 @@ public class TeeweeTest {
     @Test
     public void testPostures() {
         Puzzle puzzle = new Puzzle();
-        puzzle.setSpace(new CommonCube(4,4,4));
+        puzzle.setSpace(new CommonCube(6,4,4));
         puzzle.setFigure(new Teewee());
 
 //        assertEquals(6, puzzle.getPostures().size());
@@ -60,6 +60,18 @@ public class TeeweeTest {
     public void testTeewee663(){
         Puzzle puzzle = new Puzzle();
         puzzle.setSpace(new CommonCube(6,6,3));
+        puzzle.setFigure(new Teewee());
+
+        solver.solve(puzzle);
+
+        List<Solution> solutions = puzzle.getSolutions();
+        assertEquals(1, solutions.size(), "Wrong solutions count");
+    }
+
+    @Test
+    public void testTeewee664(){
+        Puzzle puzzle = new Puzzle();
+        puzzle.setSpace(new CommonCube(6,6,4));
         puzzle.setFigure(new Teewee());
 
         solver.solve(puzzle);

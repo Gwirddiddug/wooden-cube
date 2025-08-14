@@ -17,7 +17,7 @@ public class CommonCube extends RealSpace {
 	private final int z;
 
 	public CommonCube(int xSize, int ySize, int zSize) {
-		super(Math.max(Math.max(xSize, ySize), zSize));
+		super(xSize, ySize, zSize);
 		this.x = xSize;
 		this.y = ySize;
 		this.z = zSize;

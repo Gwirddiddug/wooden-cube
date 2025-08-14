@@ -2,7 +2,7 @@ package org.kaa.solver;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kaa.model.*;
-import org.kaa.solver.starters.SingleThreadStarter;
+import org.kaa.solver.starters.MultiThreadStarter;
 import org.kaa.storage.MultiThreadStorage;
 import org.kaa.utils.IOUtils;
 
@@ -78,8 +78,8 @@ public class PuzzleSolver implements IPuzzleSolver {
 		if (!puzzle.validate()) {
 			return;
 		}
-//		MultiThreadStarter.start(puzzle);
-		SingleThreadStarter.start(puzzle);
+		MultiThreadStarter.start(puzzle);
+//		SingleThreadStarter.start(puzzle);
 
 	}
 

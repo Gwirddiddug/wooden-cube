@@ -9,20 +9,17 @@ import org.kaa.solver.ProgressBar;
 import org.kaa.solver.Variants;
 import org.kaa.storage.RealSpaceStorage;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Slf4j
-public class SingleWorker extends Worker {
+public class MultiThreadWorker extends Worker {
 
     private final IterateVariant iterateVariant;
     private Solution solution = null;
+    private LinkedHashSet<RealSpace> cache = new LinkedHashSet<>();
 
-    public SingleWorker(RealSpaceStorage backLog, List<Figure> postures) {
-        super(backLog, postures);
-        iterateVariant = new IterateVariant(postures);
-    }
-
-    public SingleWorker(RealSpaceStorage backLog, List<Figure> postures, ProgressBar progressBar) {
+    public MultiThreadWorker(RealSpaceStorage backLog, List<Figure> postures, ProgressBar progressBar) {
         super(backLog, postures, progressBar);
         iterateVariant = new IterateVariant(postures);
     }
@@ -41,28 +38,29 @@ public class SingleWorker extends Worker {
     //перебор вариантов
     protected void iterate(RealSpace variant) {
         do {
+//            progressBar.setProgress(variant.getLevel());
             //добавляем ещё одну фигуру, выбираем первый из вариантов, остальные скидываем в бэклог
             //если зашли в тупик, берём из бэклога
             variant = singleStep(variant);
-
-//          progressBar.setProgress(newSpaces.getFirst().getCompactFigures().size());
         } while (variant != null);
         log.warn("Fail");
     }
 
     private RealSpace singleStep(RealSpace variant) {
         if (variant.size() == 0) {
-            solution = new Solution(variant);
-            backLog.clear();
-            backLog.saveSolution(variant);
-            log.info("Job is done");
+            successComplete(variant);
             return null;
         }
 
-        iterateVariant.setSolution(variant);
-        Variants call = iterateVariant.call();
+        Variants variants = iterateVariant.allocate(variant);
+        return checkVariant(variants);
+    }
 
-        return checkVariant(call);
+    private void successComplete(RealSpace variant) {
+        solution = new Solution(variant);
+        backLog.clear();
+        backLog.saveSolution(variant);
+        log.info("Job is done");
     }
 
     private RealSpace checkVariant(Variants futures) {
@@ -73,9 +71,10 @@ public class SingleWorker extends Worker {
             theOne = futures.getFirst();
             futures.removeFirst();
             backLog.addAll(futures);
-            maxBackLogSize = Math.max(maxBackLogSize, backLog.size());
+//        maxBackLogSize = Math.max(maxBackLogSize, backLog.size());
         }
 
         return theOne;
     }
+
 }

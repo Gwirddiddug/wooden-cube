@@ -5,15 +5,18 @@ import org.kaa.exceptions.OutOfUnitsException;
 import org.kaa.model.RealSpace;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.Comparator;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Slf4j
-public class MultiThreadStorage  extends RealSpaceStorage {
-    private final ConcurrentLinkedDeque<RealSpace> items = new ConcurrentLinkedDeque<>();
+public class SortedStorage extends RealSpaceStorage {
+    private final Comparator<? super RealSpace> comparator = new RealSpaceComparator();
+    private final ConcurrentSkipListSet<RealSpace> items = new ConcurrentSkipListSet<>(comparator);
 
     @Override
     public synchronized RealSpace getFirst() throws OutOfUnitsException {
         log.debug("getFirst");
+        if (items.isEmpty()) return null;
         RealSpace item = items.getFirst();
         items.removeFirst();
         return item;
@@ -24,41 +27,46 @@ public class MultiThreadStorage  extends RealSpaceStorage {
         log.debug("getLast");
         if (items.isEmpty()) return null;
         RealSpace item = items.getLast();
-        items.removeLast();
+        items.remove(item);
         return item;
     }
 
     @Override
-    public synchronized boolean add(RealSpace item) {
+    public boolean add(RealSpace item) {
         log.debug("add");
         if (isLocked.get()) {
             return false;
         }
-        boolean added = items.add(item);
-        maxBacklogSize = Math.max(maxBacklogSize, items.size());
-        return added;
+        return items.add(item);
     }
 
     @Override
-    public synchronized boolean addAll(Collection<RealSpace> newItems) {
+    public boolean addAll(Collection<RealSpace> newItems) {
         log.debug("addAll");
         if (isLocked.get()) {
             return false;
         }
-        boolean added = items.addAll(newItems);
-        maxBacklogSize = Math.max(maxBacklogSize, items.size());
-        return added;
+        return items.addAll(newItems);
     }
 
     @Override
-    public synchronized int size() {
+    public int size() {
         return items.size();
     }
-
 
     @Override
     public void clear() {
         isLocked.set(true);
         items.clear();
+    }
+
+    private static class RealSpaceComparator implements Comparator<RealSpace> {
+        @Override
+        public int compare(RealSpace o1, RealSpace o2) {
+            if (o2.getLevel() == o1.getLevel()) {
+                return Integer.compare(o2.getHash(), o1.getHash());
+            }
+            return Integer.compare(o1.getLevel(), o2.getLevel());
+        }
     }
 }

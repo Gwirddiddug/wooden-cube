@@ -1,6 +1,6 @@
 package org.kaa.runtime;
 
-import org.kaa.puzzle.figures.Zigzag;
+import org.kaa.puzzle.figures.Teewee;
 import org.kaa.puzzle.spaces.CommonCube;
 
 public class Main {
@@ -9,11 +9,11 @@ public class Main {
 //        controller.init();
 //		CommonCube space = new CommonCube(5, 5, 5);
 //		CommonCube space = new CommonCube(5, 4, 4);
-		CommonCube space = new CommonCube(4, 5, 2);
+		CommonCube space = new CommonCube(6, 6, 4);
 //		CommonCube space = new CommonCube(5, 4, 4);
 //		CommonCube space = new CommonCube(5, 5, 2);
-		Runtime runtime = new Runtime(space, new Zigzag());
-//		Runtime runtime = new Runtime(space, new Teewee());
+//		Runtime runtime = new Runtime(space, new Zigzag());
+		Runtime runtime = new Runtime(space, new Teewee());
 		runtime.execute();
 	}
 

@@ -4,7 +4,6 @@ import org.kaa.exceptions.OutOfUnitsException;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Created by Gwirggiddug on 08.02.2015.
@@ -61,5 +60,10 @@ public abstract class AbstractStorage<T> implements CommonStorage<T> {
 	@Override
 	public int size() {
 		return units.size();
+	}
+
+	@Override
+	public void saveSolution(T solution) {
+
 	}
 }
